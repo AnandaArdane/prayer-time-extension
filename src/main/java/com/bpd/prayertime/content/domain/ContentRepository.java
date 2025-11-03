@@ -5,4 +5,6 @@ import java.util.List;
 
 public interface ContentRepository {
     List<Content> getContentAt(LocalDate localDate);
+
+    Content save(Content content);
 }
