@@ -1,10 +1,11 @@
 package com.bpd.prayertime.content.domain;
 
 import java.time.DayOfWeek;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
-public record Content(ContentId id, String title, Time time) {
+public record Content(ContentId id, String title, Time time, List<Item> items) {
 
     public Content {
         if (title == null) {
@@ -16,14 +17,10 @@ public record Content(ContentId id, String title, Time time) {
         }
     }
 
-
-    public record ContentId(Long id) {
-    }
-
     public interface Time {
         Range getRange();
 
-        boolean canBeUsedOn(LocalDateTime localDateTime);
+        boolean canBeUsedOn(Range range);
     }
 
     public record Range(LocalTime start, LocalTime end) {
@@ -37,7 +34,16 @@ public record Content(ContentId id, String title, Time time) {
         }
     }
 
-    public static class EveryTime implements Time {
+    public static Content createNew(String title, Time time) {
+        return new Content(ContentId.setAsNew(), title, time, new ArrayList<>());
+    }
+
+    public void addItem(ResourceId resourceId, Integer sequence) {
+        Item newItem = Item.createNew(id, resourceId, sequence);
+        this.items.add(newItem);
+    }
+
+    public record EveryTime() implements Time {
 
         @Override
         public Range getRange() {
@@ -45,18 +51,12 @@ public record Content(ContentId id, String title, Time time) {
         }
 
         @Override
-        public boolean canBeUsedOn(LocalDateTime localDateTime) {
+        public boolean canBeUsedOn(Range range) {
             return true;
         }
     }
 
-    public static class EveryDayOfWeek implements Time {
-
-        private final DayOfWeek dayOfWeek;
-
-        public EveryDayOfWeek(DayOfWeek dayOfWeek) {
-            this.dayOfWeek = dayOfWeek;
-        }
+    public record EveryDayOfWeek(DayOfWeek dayOfWeek) implements Time {
 
         @Override
         public Range getRange() {
@@ -64,18 +64,14 @@ public record Content(ContentId id, String title, Time time) {
         }
 
         @Override
-        public boolean canBeUsedOn(LocalDateTime localDateTime) {
-            return localDateTime.getDayOfWeek().equals(dayOfWeek);
+        public boolean canBeUsedOn(Range range) {
+            return true;
         }
     }
 
-    public static class EveryDayOfWeekAtTime implements Time {
+    public record EveryDayOfWeekAtTime(DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime) implements Time {
 
-        private final DayOfWeek dayOfWeek;
-        private final LocalTime startTime;
-        private final LocalTime endTime;
-
-        public EveryDayOfWeekAtTime(DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime) {
+        public EveryDayOfWeekAtTime {
             if (dayOfWeek == null) {
                 throw new IllegalArgumentException("Day of week can't be null");
             }
@@ -92,9 +88,6 @@ public record Content(ContentId id, String title, Time time) {
                 throw new IllegalArgumentException("Start time should not after end time");
             }
 
-            this.dayOfWeek = dayOfWeek;
-            this.startTime = startTime;
-            this.endTime = endTime;
         }
 
         @Override
@@ -103,8 +96,13 @@ public record Content(ContentId id, String title, Time time) {
         }
 
         @Override
-        public boolean canBeUsedOn(LocalDateTime localDateTime) {
-            return localDateTime.getDayOfWeek().equals(dayOfWeek);
+        public boolean canBeUsedOn(Range range) {
+            LocalTime startRange = range.start;
+            LocalTime endRange = range.end;
+
+            boolean startIsOkay = startRange.isAfter(startTime) || startRange.equals(startTime);
+            boolean endIsOkay = endRange.isBefore(endTime) || endRange.equals(endTime);
+            return startIsOkay && endIsOkay;
         }
     }
 }
