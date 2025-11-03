@@ -7,5 +7,7 @@ public record TimelineDto(RangeDto range, List<ContentDto> contents) {
 
     public record RangeDto(LocalTime start, LocalTime end) {}
 
-    public record ContentDto(Long id, String title) {}
+    public record ContentDto(Long id, String title, List<ContentItemDto> items) {}
+
+    public record ContentItemDto(Long id, Integer sequence, Long resourceId) {}
 }

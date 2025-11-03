@@ -4,7 +4,6 @@ import com.bpd.prayertime.content.domain.Content;
 import com.bpd.prayertime.content.domain.ContentRepository;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,24 +34,27 @@ public class GetContentsOfTheDayAt {
 
         List<Content.Range> timelineRanges = new ArrayList<>();
         for (int i = 1; i < timelines.size(); i++) {
-            Content.Range range = new Content.Range(timelines.get(i), timelines.get(i - 1));
+            Content.Range range = new Content.Range(timelines.get(i - 1), timelines.get(i));
             timelineRanges.add(range);
         }
 
         return timelineRanges.stream()
-                .map(timelineRange -> getTimelineDto(localDate, timelineRange, contents))
+                .map(timelineRange -> getTimelineDto(timelineRange, contents))
                 .toList();
     }
 
-    private static TimelineDto getTimelineDto(LocalDate localDate, Content.Range timelineRange, List<Content> contents) {
-        LocalDateTime startOfTimeline = LocalDateTime.of(localDate, timelineRange.start());
-
+    private static TimelineDto getTimelineDto(Content.Range timelineRange, List<Content> contents) {
         List<TimelineDto.ContentDto> contentDto = contents.stream()
-                .filter(it -> it.time().canBeUsedOn(startOfTimeline))
-                .map(it -> new TimelineDto.ContentDto(it.id().id(), it.title()))
+                .filter(it -> it.time().canBeUsedOn(timelineRange))
+                .map(GetContentsOfTheDayAt::getContentDto)
                 .toList();
 
         TimelineDto.RangeDto rangeDto = new TimelineDto.RangeDto(timelineRange.start(), timelineRange.end());
         return new TimelineDto(rangeDto, contentDto);
+    }
+
+    private static TimelineDto.ContentDto getContentDto(Content content) {
+        List<TimelineDto.ContentItemDto> itemDtos = content.items().stream().map(it -> new TimelineDto.ContentItemDto(it.id().id(), it.sequence(), it.resourceId().id())).toList();
+        return new TimelineDto.ContentDto(content.id().id(), content.title(), itemDtos);
     }
 }
