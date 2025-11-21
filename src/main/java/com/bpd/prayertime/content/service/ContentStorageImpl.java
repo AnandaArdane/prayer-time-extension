@@ -1,16 +1,18 @@
 package com.bpd.prayertime.content.service;
 
+import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.*;
 
 import java.io.InputStream;
 import java.util.Map;
 import java.util.Objects;
 
 @Component
+@Slf4j
 public class ContentStorageImpl implements ContentStorage {
 
     private static final String CONTENT_BUCKET = "content";
@@ -18,6 +20,31 @@ public class ContentStorageImpl implements ContentStorage {
 
     public ContentStorageImpl(S3Client s3Client) {
         this.s3Client = s3Client;
+    }
+
+    @PostConstruct
+    public void initBucket() {
+        if (!bucketExists()) {
+            createBucket();
+        }
+    }
+
+    private boolean bucketExists() {
+        try {
+            s3Client.headBucket(HeadBucketRequest.builder()
+                    .bucket(CONTENT_BUCKET)
+                    .build());
+            return true;
+        } catch (S3Exception e) {
+            return false;
+        }
+    }
+
+    private void createBucket() {
+        s3Client.createBucket(CreateBucketRequest.builder()
+                .bucket(CONTENT_BUCKET)
+                .build());
+        log.info("Bucket created: " + CONTENT_BUCKET);
     }
 
     @Override
