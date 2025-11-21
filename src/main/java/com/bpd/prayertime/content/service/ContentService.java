@@ -3,6 +3,7 @@ package com.bpd.prayertime.content.service;
 import com.bpd.prayertime.content.entity.Content;
 import com.bpd.prayertime.content.repository.ContentRepository;
 import com.bpd.prayertime.content.service.mapper.ContentMapper;
+import com.bpd.prayertime.content.service.util.ContentFileValidation;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,6 +26,7 @@ public class ContentService {
     }
 
     public ContentResponseDto create(ContentRequestDto contentRequestDto, MultipartFile file) {
+        ContentFileValidation.validateFile(file);
         Content content = contentMapper.toEntity(contentRequestDto);
         contentRepository.save(content);
         Long contentId = content.getId();
@@ -60,6 +62,7 @@ public class ContentService {
         Long contentId = content.getId();
 
         if (file != null) {
+            ContentFileValidation.validateFile(file);
             storeFile(file, id);
         }
         ContentResponseDto response = contentMapper.toDto(content);
