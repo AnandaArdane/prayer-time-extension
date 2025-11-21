@@ -1,3 +1,5 @@
 databaseChangeLog:
   - include:
       file: db/changelog/20251109064800-add-entity-StudySession.yaml
+  - include:
+      file: db/changelog/20251115122300-add-entity-Content.yaml

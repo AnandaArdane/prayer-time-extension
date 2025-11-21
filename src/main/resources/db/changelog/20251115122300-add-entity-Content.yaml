@@ -1,0 +1,43 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20251115122500-1
+      author: nanda
+      changes:
+        - createSequence:
+            sequenceName: content_seq
+            startValue: 1
+            incrementBy: 1
+
+  - changeSet:
+      id: 20251115125000-1
+      author: nanda
+      changes:
+        - createTable:
+            tableName: content
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: title
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: active
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 20251115122700-1
+      author: nanda
+      changes:
+        - addDefaultValue:
+            tableName: content
+            columnName: id
+            defaultValueSequenceNext: content_seq
