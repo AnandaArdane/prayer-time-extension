@@ -1,2 +1,67 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+<script lang="ts">
+    import { onMount } from 'svelte';
+    import type { PageData } from './$types';
+    import PrayerTime from '$lib/components/PrayerTime.svelte';
+    import Content from '$lib/components/Content.svelte';
+    import StudySession from '$lib/components/StudySession.svelte';
+
+    let { data }: { data: PageData } = $props();
+
+    // State for Head and general time
+    let currentTime = $state(new Date());
+    
+    // Derived state for formatting
+    let dateString = $derived(currentTime.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }));
+    
+    onMount(() => {
+        // Clock Interval
+        const clockInterval = setInterval(() => {
+            currentTime = new Date();
+        }, 1000);
+        
+        return () => {
+            clearInterval(clockInterval);
+        };
+    });
+</script>
+
+<div class="bg-gray-50 font-sans text-gray-800 antialiased min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="w-full px-4 lg:px-12 pt-4 mb-2">
+        <div class="flex justify-between items-center border-b border-gray-200 pb-3">
+            <div class="flex items-center">
+                <div class="bg-theme-primary-700 w-8 h-8 lg:w-10 lg:h-10 rounded-lg flex items-center justify-center shadow-md mr-3 lg:mr-4">
+                    <svg class="w-5 h-5 lg:w-6 lg:h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-base lg:text-xl font-black text-theme-primary-700 leading-none">Masjid Al-Barkah</h1>
+                    <p class="text-[8px] lg:text-[10px] text-theme-primary-500 font-bold uppercase tracking-widest mt-1">Informasi Digital Terpadu</p>
+                </div>
+            </div>
+
+            <div class="text-right">
+                <p class="text-gray-500 text-[8px] lg:text-[10px] font-bold uppercase tracking-widest">{dateString}</p>
+                <p class="text-theme-primary-500 text-[8px] lg:text-[10px] font-black uppercase tracking-widest">25 Jumadil Akhir 1447 H</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Jadwal Sholat Section -->
+    <PrayerTime prayerTimes={data.prayerTimes} {currentTime} />
+
+    <!-- Main Content -->
+    <main class="max-w-[1440px] mx-auto px-4 lg:px-12 w-full grid grid-cols-1 lg:grid-cols-12 gap-6 flex-grow pb-8">
+        <!-- Slider Area (Content) -->
+        <Content slides={data.slides} />
+
+        <!-- Sidebar Area (Study Session) -->
+        <StudySession events={data.sidebarEvents} />
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-4 px-6 text-center border-t border-gray-100 bg-white mt-auto">
+        <p class="text-gray-400 text-[8px] lg:text-[10px] font-bold tracking-[0.4em] uppercase">&copy; 2026 DIGITAL MASJID HUB | AL-BARKAH</p>
+    </footer>
+</div>
