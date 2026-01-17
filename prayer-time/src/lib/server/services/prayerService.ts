@@ -24,6 +24,7 @@ export interface LandingPageData {
     prayerTimes: PrayerTime[];
     slides: Slide[];
     sidebarEvents: SidebarEvent[];
+    error?: string;
 }
 
 interface OneDayPrayerTimeDto {
@@ -36,6 +37,7 @@ interface OneDayPrayerTimeDto {
 
 export const getLandingPageData = async (): Promise<LandingPageData> => {
     let prayerTimes: PrayerTime[] = [];
+    let error: string | undefined;
 
     try {
         // Default to Jakarta, Today
@@ -62,29 +64,20 @@ export const getLandingPageData = async (): Promise<LandingPageData> => {
             ];
         } else {
             console.error("Failed to fetch prayer times:", response.status);
-            // Fallback
-            prayerTimes = [
-                { name: "Subuh", time: "04:45" },
-                { name: "Dzuhur", time: "11:50" },
-                { name: "Ashar", time: "15:10" },
-                { name: "Maghrib", time: "18:05" },
-                { name: "Isya", time: "19:20" }
-            ];
+            error = "Gagal memuat jadwal sholat. Silakan cek koneksi server.";
+            // Fallback empty
+            prayerTimes = [];
         }
     } catch (e) {
         console.error("Error fetching prayer times:", e);
-        // Fallback
-        prayerTimes = [
-            { name: "Subuh", time: "04:45" },
-            { name: "Dzuhur", time: "11:50" },
-            { name: "Ashar", time: "15:10" },
-            { name: "Maghrib", time: "18:05" },
-            { name: "Isya", time: "19:20" }
-        ];
+        error = "Gagal terhubung ke server.";
+        // Fallback empty
+        prayerTimes = [];
     }
 
     return {
         prayerTimes,
+        error,
         slides: [
             {
                 id: 1,
