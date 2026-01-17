@@ -9,12 +9,12 @@ export interface Slide {
     description: string;
     category: string;
     imageUrl: string;
-    blurUrl: string; // Using same or different image for blur effect
+    blurUrl: string;
 }
 
 export interface SidebarEvent {
     id: number;
-    dayTime: string; // e.g., "Selasa | Ba'da Isya"
+    dayTime: string;
     title: string;
     imageUrl: string;
     isActive?: boolean;
@@ -26,16 +26,65 @@ export interface LandingPageData {
     sidebarEvents: SidebarEvent[];
 }
 
+interface OneDayPrayerTimeDto {
+    fajr: string;
+    dhuhr: string;
+    asr: string;
+    maghrib: string;
+    isha: string;
+}
+
 export const getLandingPageData = async (): Promise<LandingPageData> => {
-    // Helper to simulate network delay if needed, but for now just return direct
-    return {
-        prayerTimes: [
+    let prayerTimes: PrayerTime[] = [];
+
+    try {
+        // Default to Jakarta, Today
+        const city = "Jakarta";
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const dateStr = `${year}-${month}-${day}`;
+
+        const response = await fetch(`http://localhost:8080/api/prayers/by-city?name=${city}&date=${dateStr}`);
+
+        if (response.ok) {
+            const data: OneDayPrayerTimeDto = await response.json();
+            // Map HH:mm:ss to HH:mm
+            const formatTime = (t: string) => t.substring(0, 5);
+
+            prayerTimes = [
+                { name: "Subuh", time: formatTime(data.fajr) },
+                { name: "Dzuhur", time: formatTime(data.dhuhr) },
+                { name: "Ashar", time: formatTime(data.asr) },
+                { name: "Maghrib", time: formatTime(data.maghrib) },
+                { name: "Isya", time: formatTime(data.isha) }
+            ];
+        } else {
+            console.error("Failed to fetch prayer times:", response.status);
+            // Fallback
+            prayerTimes = [
+                { name: "Subuh", time: "04:45" },
+                { name: "Dzuhur", time: "11:50" },
+                { name: "Ashar", time: "15:10" },
+                { name: "Maghrib", time: "18:05" },
+                { name: "Isya", time: "19:20" }
+            ];
+        }
+    } catch (e) {
+        console.error("Error fetching prayer times:", e);
+        // Fallback
+        prayerTimes = [
             { name: "Subuh", time: "04:45" },
             { name: "Dzuhur", time: "11:50" },
             { name: "Ashar", time: "15:10" },
             { name: "Maghrib", time: "18:05" },
             { name: "Isya", time: "19:20" }
-        ],
+        ];
+    }
+
+    return {
+        prayerTimes,
         slides: [
             {
                 id: 1,
