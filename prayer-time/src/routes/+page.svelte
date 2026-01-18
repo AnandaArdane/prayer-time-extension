@@ -9,6 +9,7 @@
 
 	// State for Head and general time
 	let currentTime = $state(new Date());
+	let userLocation = $state('Mendeteksi...');
 
 	// Derived state for formatting
 	let dateString = $derived(
@@ -20,7 +21,56 @@
 		})
 	);
 
+	async function fetchUserLocation() {
+		if ('geolocation' in navigator) {
+			navigator.geolocation.getCurrentPosition(
+				async (position) => {
+					try {
+						const { latitude, longitude } = position.coords;
+						// Menggunakan Nominatim untuk reverse geocoding
+						const response = await fetch(
+							`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10`
+						);
+						const data = await response.json();
+
+						// Prioritas pengambilan nama lokasi yang lebih spesifik ke umum
+						const city =
+							data.address.city ||
+							data.address.town ||
+							data.address.village ||
+							data.address.suburb ||
+							data.address.county ||
+							'Lokasi Terdeteksi';
+						const state = data.address.state || '';
+
+						userLocation = `${city}${state ? ', ' + state : ''}`;
+					} catch (error) {
+						userLocation = 'Gagal memuat alamat';
+						console.error('Geocoding error:', error);
+					}
+				},
+				(error) => {
+					if (error.code === 1) {
+						userLocation = 'Akses Lokasi Ditolak';
+					} else {
+						userLocation = 'Lokasi Tidak Tersedia';
+					}
+				},
+				{
+					enableHighAccuracy: true,
+					timeout: 5000,
+					maximumAge: 0
+				}
+			);
+		} else {
+			userLocation = 'Browser Tidak Mendukung';
+		}
+	}
+
 	onMount(() => {
+		// Fetch Location
+		fetchUserLocation();
+
 		// Clock Interval
 		const clockInterval = setInterval(() => {
 			currentTime = new Date();
@@ -47,13 +97,17 @@
 					</svg>
 				</div>
 				<div>
-					<h1 class="text-base lg:text-xl font-black text-theme-primary-700 leading-none">
-						Masjid Al-Barkah
-					</h1>
+					<div class="flex items-center gap-1 mb-0.5">
+						<span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+						<p class="text-[7px] lg:text-[8px] font-bold text-gray-400 uppercase tracking-widest">
+							Lokasi Saat Ini
+						</p>
+					</div>
 					<p
-						class="text-[8px] lg:text-[10px] text-theme-primary-500 font-bold uppercase tracking-widest mt-1"
+						id="user-location"
+						class="text-[10px] lg:text-[12px] text-theme-primary-700 font-black uppercase tracking-widest italic"
 					>
-						Informasi Digital Terpadu
+						{userLocation}
 					</p>
 				</div>
 			</div>
