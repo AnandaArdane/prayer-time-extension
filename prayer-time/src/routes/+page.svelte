@@ -4,6 +4,8 @@
 	import PrayerTime from '$lib/components/PrayerTime.svelte';
 	import Content from '$lib/components/Content.svelte';
 	import StudySession from '$lib/components/StudySession.svelte';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
 
 	let { data }: { data: PageData } = $props();
 
@@ -27,9 +29,21 @@
 				async (position) => {
 					try {
 						const { latitude, longitude } = position.coords;
+
+						// Reload with coordinates if not already present or different
+						const currentLat = $page.url.searchParams.get('lat');
+						const currentLong = $page.url.searchParams.get('long');
+
+						if (!currentLat || !currentLong) {
+							goto(`?lat=${latitude}&long=${longitude}`, { keepFocus: true, noScroll: true });
+						}
+
+						const targetLat = currentLat ? parseFloat(currentLat) : latitude;
+						const targetLong = currentLong ? parseFloat(currentLong) : longitude;
+
 						// Menggunakan Nominatim untuk reverse geocoding
 						const response = await fetch(
-							`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10`
+							`https://nominatim.openstreetmap.org/reverse?format=json&lat=${targetLat}&lon=${targetLong}&zoom=10`
 						);
 						const data = await response.json();
 

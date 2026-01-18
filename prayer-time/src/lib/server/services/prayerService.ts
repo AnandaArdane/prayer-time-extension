@@ -35,20 +35,21 @@ interface OneDayPrayerTimeDto {
     isha: string;
 }
 
-export const getLandingPageData = async (): Promise<LandingPageData> => {
+export const getLandingPageData = async (lat?: number, long?: number): Promise<LandingPageData> => {
     let prayerTimes: PrayerTime[] = [];
     let error: string | undefined;
 
     try {
         // Default to Jakarta, Today
-        const city = "Jakarta";
+        const latitude = lat ?? -6.1751;
+        const longitude = long ?? 106.8650;
         const now = new Date();
         const year = now.getFullYear();
         const month = String(now.getMonth() + 1).padStart(2, '0');
         const day = String(now.getDate()).padStart(2, '0');
         const dateStr = `${year}-${month}-${day}`;
 
-        const response = await fetch(`http://localhost:8080/api/prayers/by-city?name=${city}&date=${dateStr}`);
+        const response = await fetch(`http://localhost:8080/api/prayers/by-coordinate?latitude=${latitude}&longitude=${longitude}&date=${dateStr}`);
 
         if (response.ok) {
             const data: OneDayPrayerTimeDto = await response.json();
