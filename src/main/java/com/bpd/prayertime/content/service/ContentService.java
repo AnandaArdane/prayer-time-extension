@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 @Service
 @Transactional
@@ -19,7 +20,8 @@ public class ContentService {
     private final ContentMapper contentMapper;
     private final ContentStorage contentStorage;
 
-    public ContentService(ContentRepository contentRepository, ContentMapper contentMapper, ContentStorage contentStorage) {
+    public ContentService(ContentRepository contentRepository, ContentMapper contentMapper,
+            ContentStorage contentStorage) {
         this.contentRepository = contentRepository;
         this.contentMapper = contentMapper;
         this.contentStorage = contentStorage;
@@ -73,5 +75,15 @@ public class ContentService {
     public void delete(Long id) {
         contentStorage.deleteById(id);
         contentRepository.deleteById(id);
+    }
+
+    public List<ContentResponseDto> findAllActive() {
+        return contentRepository.findAllByActiveTrue().stream()
+                .map(content -> {
+                    ContentResponseDto response = contentMapper.toDto(content);
+                    response.setUrl(getContentUrl(content.getId()));
+                    return response;
+                })
+                .toList();
     }
 }
