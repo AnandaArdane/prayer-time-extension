@@ -73,8 +73,12 @@ public class ContentService {
     }
 
     public void delete(Long id) {
-        contentStorage.deleteById(id);
         contentRepository.deleteById(id);
+        contentStorage.deleteById(id);
+    }
+
+    public InputStream retrieveContent(Long id) {
+        return contentStorage.retrieve(id);
     }
 
     public List<ContentResponseDto> findAllActive() {

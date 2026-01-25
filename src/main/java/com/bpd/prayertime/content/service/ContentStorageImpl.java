@@ -55,12 +55,9 @@ public class ContentStorageImpl implements ContentStorage {
                         .key(id.toString())
                         .metadata(
                                 Map.of(
-                                        "filename", Objects.requireNonNull(fileName)
-                                )
-                        )
+                                        "filename", Objects.requireNonNull(fileName)))
                         .build(),
-                RequestBody.fromInputStream(inputStream, fileSize)
-        );
+                RequestBody.fromInputStream(inputStream, fileSize));
     }
 
     @Override
@@ -68,7 +65,14 @@ public class ContentStorageImpl implements ContentStorage {
         s3Client.deleteObject(DeleteObjectRequest.builder()
                 .bucket(CONTENT_BUCKET)
                 .key(id.toString())
-                .build()
-        );
+                .build());
+    }
+
+    @Override
+    public InputStream retrieve(Long id) {
+        return s3Client.getObject(GetObjectRequest.builder()
+                .bucket(CONTENT_BUCKET)
+                .key(id.toString())
+                .build());
     }
 }

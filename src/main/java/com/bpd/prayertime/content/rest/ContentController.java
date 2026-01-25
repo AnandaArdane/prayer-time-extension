@@ -4,6 +4,7 @@ import com.bpd.prayertime.content.service.ContentRequestDto;
 import com.bpd.prayertime.content.service.ContentResponseDto;
 import com.bpd.prayertime.content.service.ContentService;
 import jakarta.validation.Valid;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -43,5 +44,13 @@ public class ContentController {
     @GetMapping("/contents/active")
     public ResponseEntity<List<ContentResponseDto>> listActive() {
         return ResponseEntity.ok(contentService.findAllActive());
+    }
+
+    @GetMapping("/contents/{id}/file")
+    public ResponseEntity<InputStreamResource> getFile(@PathVariable Long id) {
+        java.io.InputStream inputStream = contentService.retrieveContent(id);
+        return ResponseEntity.ok()
+                .contentType(org.springframework.http.MediaType.IMAGE_JPEG)
+                .body(new InputStreamResource(inputStream));
     }
 }
