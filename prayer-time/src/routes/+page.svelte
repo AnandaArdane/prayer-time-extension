@@ -133,7 +133,7 @@
 				<p
 					class="text-theme-primary-500 text-[8px] lg:text-[10px] font-black uppercase tracking-widest"
 				>
-					25 Jumadil Akhir 1447 H
+					{data.hijriDate || 'Memuat Tanggal...'}
 				</p>
 			</div>
 		</div>

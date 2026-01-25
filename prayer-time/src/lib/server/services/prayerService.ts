@@ -25,6 +25,7 @@ export interface LandingPageData {
     slides: Slide[];
     sidebarEvents: SidebarEvent[];
     error?: string;
+    hijriDate?: string;
 }
 
 interface OneDayPrayerTimeDto {
@@ -33,11 +34,13 @@ interface OneDayPrayerTimeDto {
     asr: string;
     maghrib: string;
     isha: string;
+    hijriDate: string;
 }
 
 export const getLandingPageData = async (lat?: number, long?: number): Promise<LandingPageData> => {
     let prayerTimes: PrayerTime[] = [];
     let error: string | undefined;
+    let hijriDate: string | undefined;
 
     try {
         // Default to Jakarta, Today
@@ -55,6 +58,7 @@ export const getLandingPageData = async (lat?: number, long?: number): Promise<L
             const data: OneDayPrayerTimeDto = await response.json();
             // Map HH:mm:ss to HH:mm
             const formatTime = (t: string) => t.substring(0, 5);
+            hijriDate = data.hijriDate;
 
             prayerTimes = [
                 { name: "Subuh", time: formatTime(data.fajr) },
@@ -79,6 +83,7 @@ export const getLandingPageData = async (lat?: number, long?: number): Promise<L
     return {
         prayerTimes,
         error,
+        hijriDate,
         slides: [
             {
                 id: 1,
