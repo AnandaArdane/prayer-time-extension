@@ -37,10 +37,29 @@ interface OneDayPrayerTimeDto {
     hijriDate: string;
 }
 
+interface ContentResponseDto {
+    id: number;
+    title: string;
+    active: boolean;
+    url: string;
+}
+
 export const getLandingPageData = async (lat?: number, long?: number): Promise<LandingPageData> => {
     let prayerTimes: PrayerTime[] = [];
     let error: string | undefined;
     let hijriDate: string | undefined;
+
+    // Default slides (fallback)
+    let slides: Slide[] = [
+        {
+            id: 1,
+            category: "-",
+            title: "-",
+            description: "Konten tidak tersedia",
+            imageUrl: "https://images.unsplash.com/photo-1590073844006-33379778ae09?auto=format&fit=crop&w=1200&q=80",
+            blurUrl: "https://images.unsplash.com/photo-1590073844006-33379778ae09?auto=format&fit=crop&w=1200&q=80"
+        }
+    ];
 
     try {
         // Default to Jakarta, Today
@@ -80,36 +99,32 @@ export const getLandingPageData = async (lat?: number, long?: number): Promise<L
         prayerTimes = [];
     }
 
+    try {
+        const contentResponse = await fetch('http://localhost:8080/api/contents/active');
+        if (contentResponse.ok) {
+            const contents: ContentResponseDto[] = await contentResponse.json();
+            if (contents.length > 0) {
+                slides = contents.map(content => ({
+                    id: content.id,
+                    title: content.title,
+                    description: content.title,
+                    category: "-",
+                    imageUrl: `http://localhost:8080${content.url}`,
+                    blurUrl: `http://localhost:8080${content.url}`
+                }));
+            }
+        } else {
+            console.error("Failed to fetch active contents:", contentResponse.status);
+        }
+    } catch (e) {
+        console.error("Error fetching active contents:", e);
+    }
+
     return {
         prayerTimes,
         error,
         hijriDate,
-        slides: [
-            {
-                id: 1,
-                category: "Program Masjid",
-                title: "Program Tahfidz Akhir Pekan",
-                description: "Pendaftaran santri baru untuk kelas hafalan intensif setiap Sabtu dan Ahad.",
-                imageUrl: "https://images.unsplash.com/photo-1590073844006-33379778ae09?auto=format&fit=crop&w=1200&q=80",
-                blurUrl: "https://images.unsplash.com/photo-1590073844006-33379778ae09?auto=format&fit=crop&w=1200&q=80"
-            },
-            {
-                id: 2,
-                category: "Program Masjid",
-                title: "Program Tahfidz Akhir Pekan",
-                description: "Pendaftaran santri baru untuk kelas hafalan intensif setiap Sabtu dan Ahad.",
-                imageUrl: "https://images.unsplash.com/photo-1590073844006-33379778ae09?auto=format&fit=crop&w=1200&q=80",
-                blurUrl: "https://images.unsplash.com/photo-1590073844006-33379778ae09?auto=format&fit=crop&w=1200&q=80"
-            },
-            {
-                id: 3,
-                category: "Program Masjid",
-                title: "Program Tahfidz Akhir Pekan",
-                description: "Pendaftaran santri baru untuk kelas hafalan intensif setiap Sabtu dan Ahad.",
-                imageUrl: "https://images.unsplash.com/photo-1590073844006-33379778ae09?auto=format&fit=crop&w=1200&q=80",
-                blurUrl: "https://images.unsplash.com/photo-1590073844006-33379778ae09?auto=format&fit=crop&w=1200&q=80"
-            }
-        ],
+        slides,
         sidebarEvents: [
             {
                 id: 1,

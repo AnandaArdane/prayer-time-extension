@@ -5,6 +5,8 @@ import lombok.Data;
 
 @Data
 public final class ContentResponseDto {
+    private Long id;
+
     @NotNull
     private String title;
 
