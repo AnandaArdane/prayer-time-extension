@@ -5,23 +5,24 @@ import com.bpd.prayertime.prayertime.domain.OneDayPrayerTime;
 import com.bpd.prayertime.prayertime.domain.OneDayPrayerTimeRepository;
 
 import java.time.LocalDate;
-import java.time.chrono.HijrahDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Locale;
+import java.time.LocalTime;
 
 public class GetOneDayPrayerTimeByCity {
 
     private final OneDayPrayerTimeRepository oneDayPrayerTimeRepository;
+    private final HijriDateCalculator hijriDateCalculator;
 
-    public GetOneDayPrayerTimeByCity(OneDayPrayerTimeRepository oneDayPrayerTimeRepository) {
+    public GetOneDayPrayerTimeByCity(OneDayPrayerTimeRepository oneDayPrayerTimeRepository,
+            HijriDateCalculator hijriDateCalculator) {
         this.oneDayPrayerTimeRepository = oneDayPrayerTimeRepository;
+        this.hijriDateCalculator = hijriDateCalculator;
     }
 
     public OneDayPrayerTimeDto execute(String cityName, LocalDate date) {
         OneDayPrayerTime oneDayPrayerTime = oneDayPrayerTimeRepository.getOneDayPrayerTime(new City(cityName), date);
-        HijrahDate hijrahDate = HijrahDate.from(date);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMMM yyyy G", new Locale("id", "ID"));
-        String formattedHijriDate = formatter.format(hijrahDate);
+
+        LocalTime maghrib = oneDayPrayerTime.getTimeFor(OneDayPrayerTime.Time.MAGHRIB);
+        String formattedHijriDate = hijriDateCalculator.calculateHijriDate(date, maghrib);
 
         return new OneDayPrayerTimeDto(
                 oneDayPrayerTime.getTimeFor(OneDayPrayerTime.Time.SHUBUH),
