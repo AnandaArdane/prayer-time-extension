@@ -4,7 +4,7 @@
 	import PrayerTime from '$lib/components/PrayerTime.svelte';
 	import Content from '$lib/components/Content.svelte';
 	import StudySession from '$lib/components/StudySession.svelte';
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 
 	let { data }: { data: PageData } = $props();
@@ -80,6 +80,27 @@
 			userLocation = 'Browser Tidak Mendukung';
 		}
 	}
+
+	let lastMaghribTrigger = $state('');
+
+	$effect(() => {
+		if (!data.prayerTimes || data.prayerTimes.length === 0) return;
+
+		const maghrib = data.prayerTimes.find((p) => p.name === 'Maghrib');
+		if (!maghrib) return;
+
+		const [h, m] = maghrib.time.split(':').map(Number);
+		const maghribTime = new Date(currentTime);
+		maghribTime.setHours(h, m, 0, 0);
+
+		const todayStr = currentTime.toDateString();
+
+		// Trigger re-fetch if we just passed Maghrib today and haven't triggered it yet
+		if (currentTime >= maghribTime && lastMaghribTrigger !== todayStr) {
+			lastMaghribTrigger = todayStr;
+			invalidateAll();
+		}
+	});
 
 	onMount(() => {
 		// Fetch Location
