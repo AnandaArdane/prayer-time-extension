@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
-	import PrayerTime from '$lib/components/PrayerTime.svelte';
+	import { type PrayerTime } from '$lib/server/services/prayerService';
+	import PrayerTimeComponent from '$lib/components/PrayerTime.svelte';
 	import Content from '$lib/components/Content.svelte';
 	import StudySession from '$lib/components/StudySession.svelte';
 	import { goto, invalidateAll } from '$app/navigation';
@@ -84,9 +85,9 @@
 	let lastMaghribTrigger = $state('');
 
 	$effect(() => {
-		if (!data.prayerTimes || data.prayerTimes.length === 0) return;
+		if (!data.prayerData.prayerTimes || data.prayerData.prayerTimes.length === 0) return;
 
-		const maghrib = data.prayerTimes.find((p) => p.name === 'Maghrib');
+		const maghrib = data.prayerData.prayerTimes.find((p: PrayerTime) => p.name === 'Maghrib');
 		if (!maghrib) return;
 
 		const [h, m] = maghrib.time.split(':').map(Number);
@@ -154,14 +155,18 @@
 				<p
 					class="text-theme-primary-500 text-[8px] lg:text-[10px] font-black uppercase tracking-widest"
 				>
-					{data.hijriDate || 'Memuat Tanggal...'}
+					{data.prayerData.hijriDate || 'Memuat Tanggal...'}
 				</p>
 			</div>
 		</div>
 	</header>
 
 	<!-- Jadwal Sholat Section -->
-	<PrayerTime prayerTimes={data.prayerTimes} {currentTime} error={data.error} />
+	<PrayerTimeComponent
+		prayerTimes={data.prayerData.prayerTimes}
+		{currentTime}
+		error={data.prayerData.error}
+	/>
 
 	<!-- Main Content -->
 	<main

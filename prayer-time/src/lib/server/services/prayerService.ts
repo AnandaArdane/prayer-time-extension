@@ -20,12 +20,10 @@ export interface SidebarEvent {
     isActive?: boolean;
 }
 
-export interface LandingPageData {
+export interface PrayerData {
     prayerTimes: PrayerTime[];
-    slides: Slide[];
-    sidebarEvents: SidebarEvent[];
-    error?: string;
     hijriDate?: string;
+    error?: string;
 }
 
 interface OneDayPrayerTimeDto {
@@ -44,22 +42,10 @@ interface ContentResponseDto {
     url: string;
 }
 
-export const getLandingPageData = async (lat?: number, long?: number): Promise<LandingPageData> => {
+export const getPrayerData = async (lat?: number, long?: number): Promise<PrayerData> => {
     let prayerTimes: PrayerTime[] = [];
     let error: string | undefined;
     let hijriDate: string | undefined;
-
-    // Default slides (fallback)
-    let slides: Slide[] = [
-        {
-            id: 1,
-            category: "-",
-            title: "-",
-            description: "Konten tidak tersedia",
-            imageUrl: "https://images.unsplash.com/photo-1590073844006-33379778ae09?auto=format&fit=crop&w=1200&q=80",
-            blurUrl: "https://images.unsplash.com/photo-1590073844006-33379778ae09?auto=format&fit=crop&w=1200&q=80"
-        }
-    ];
 
     try {
         // Default to Jakarta, Today
@@ -89,15 +75,33 @@ export const getLandingPageData = async (lat?: number, long?: number): Promise<L
         } else {
             console.error("Failed to fetch prayer times:", response.status);
             error = "Gagal memuat jadwal sholat. Silakan cek koneksi server.";
-            // Fallback empty
             prayerTimes = [];
         }
     } catch (e) {
         console.error("Error fetching prayer times:", e);
         error = "Gagal terhubung ke server.";
-        // Fallback empty
         prayerTimes = [];
     }
+
+    return {
+        prayerTimes,
+        hijriDate,
+        error
+    };
+};
+
+export const getSlides = async (): Promise<Slide[]> => {
+    // Default slides (fallback)
+    let slides: Slide[] = [
+        {
+            id: 1,
+            category: "-",
+            title: "-",
+            description: "Konten tidak tersedia",
+            imageUrl: "https://images.unsplash.com/photo-1590073844006-33379778ae09?auto=format&fit=crop&w=1200&q=80",
+            blurUrl: "https://images.unsplash.com/photo-1590073844006-33379778ae09?auto=format&fit=crop&w=1200&q=80"
+        }
+    ];
 
     try {
         const contentResponse = await fetch('http://localhost:8080/api/contents/active');
@@ -120,31 +124,29 @@ export const getLandingPageData = async (lat?: number, long?: number): Promise<L
         console.error("Error fetching active contents:", e);
     }
 
-    return {
-        prayerTimes,
-        error,
-        hijriDate,
-        slides,
-        sidebarEvents: [
-            {
-                id: 1,
-                dayTime: "Selasa | 13:00 WIB",
-                title: "Kitab Bulughul Maram",
-                imageUrl: "https://images.unsplash.com/photo-1518991033282-3e28d488f723?auto=format&fit=crop&w=200&q=80",
-                isActive: true
-            },
-            {
-                id: 2,
-                dayTime: "Rabu | 09:00 WIB",
-                title: "Kajian Muslimah: Fiqih Wanita",
-                imageUrl: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=200&q=80"
-            },
-            {
-                id: 3,
-                dayTime: "Jumat | 16:00 WIB",
-                title: "Tahsin Al-Qur'an Dewasa",
-                imageUrl: "https://images.unsplash.com/photo-1551041777-ed0764a0028d?auto=format&fit=crop&w=200&q=80"
-            }
-        ]
-    };
+    return slides;
+};
+
+export const getSidebarEvents = (): SidebarEvent[] => {
+    return [
+        {
+            id: 1,
+            dayTime: "Selasa | 13:00 WIB",
+            title: "Kitab Bulughul Maram",
+            imageUrl: "https://images.unsplash.com/photo-1518991033282-3e28d488f723?auto=format&fit=crop&w=200&q=80",
+            isActive: true
+        },
+        {
+            id: 2,
+            dayTime: "Rabu | 09:00 WIB",
+            title: "Kajian Muslimah: Fiqih Wanita",
+            imageUrl: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=200&q=80"
+        },
+        {
+            id: 3,
+            dayTime: "Jumat | 16:00 WIB",
+            title: "Tahsin Al-Qur'an Dewasa",
+            imageUrl: "https://images.unsplash.com/photo-1551041777-ed0764a0028d?auto=format&fit=crop&w=200&q=80"
+        }
+    ];
 };

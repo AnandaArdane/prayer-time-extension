@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types';
-import { getLandingPageData } from '$lib/server/services/prayerService';
+import { getPrayerData, getSlides, getSidebarEvents } from '$lib/server/services/prayerService';
 
 export const load: PageServerLoad = async ({ url }) => {
     const latParam = url.searchParams.get('lat');
@@ -8,8 +8,15 @@ export const load: PageServerLoad = async ({ url }) => {
     const lat = latParam ? parseFloat(latParam) : undefined;
     const long = longParam ? parseFloat(longParam) : undefined;
 
-    const data = await getLandingPageData(lat, long);
+    const [prayerData, slides] = await Promise.all([
+        getPrayerData(lat, long),
+        getSlides()
+    ]);
+    const sidebarEvents = getSidebarEvents();
+
     return {
-        ...data
+        prayerData,
+        slides,
+        sidebarEvents
     };
 };
