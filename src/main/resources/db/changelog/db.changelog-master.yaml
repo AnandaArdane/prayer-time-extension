@@ -5,3 +5,5 @@ databaseChangeLog:
       file: db/changelog/20251115122300-add-entity-Content.yaml
   - include:
       file: db/changelog/20260228143000-add-user-table.yaml
+  - include:
+      file: db/changelog/20260228145500-rename-user-to-admin-user.yaml

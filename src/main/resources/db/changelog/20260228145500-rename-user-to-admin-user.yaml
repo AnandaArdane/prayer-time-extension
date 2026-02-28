@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20260228145500-1
+      author: antigravity
+      changes:
+        - renameSequence:
+            oldSequenceName: user_seq
+            newSequenceName: admin_user_seq
+  - changeSet:
+      id: 20260228145500-2
+      author: antigravity
+      changes:
+        - renameTable:
+            oldTableName: user
+            newTableName: admin_user
