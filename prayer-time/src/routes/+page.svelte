@@ -191,5 +191,26 @@
 			&copy; 2026 DIGITAL MASJID HUB | AL-BARKAH
 		</p>
 	</footer>
+	<div class="fixed bottom-6 right-20 z-[100]">
+		<a
+			href="/login"
+			class="w-12 h-12 bg-white rounded-full shadow-lg border border-gray-100 flex items-center justify-center hover:scale-110 active:scale-95 transition-all group text-gray-400 hover:text-theme-primary-600"
+			aria-label="Login"
+		>
+			<svg
+				class="w-6 h-6 group-hover:scale-110 transition-transform"
+				fill="none"
+				stroke="currentColor"
+				viewBox="0 0 24 24"
+			>
+				<path
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					stroke-width="2"
+					d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+				/>
+			</svg>
+		</a>
+	</div>
 	<TimeMachine simulatedTime={data.simulatedTime} />
 </div>
