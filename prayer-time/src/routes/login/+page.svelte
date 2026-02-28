@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { fade, fly } from 'svelte/transition';
 	import { backOut } from 'svelte/easing';
+	import { goto } from '$app/navigation';
 
 	let email = $state('');
 	let password = $state('');
@@ -28,7 +29,10 @@
 			if (response.ok) {
 				const data = await response.json();
 				console.log('Login success:', data);
-				successMessage = 'Login Berhasil! (Sesuai permintaan, tidak ada redirect)';
+				successMessage = 'Login Berhasil! Mengalihkan...';
+				setTimeout(() => {
+					goto('/admin/contents');
+				}, 1000);
 			} else {
 				const errorText = await response.text();
 				errorMessage = errorText || 'Email atau password salah';
