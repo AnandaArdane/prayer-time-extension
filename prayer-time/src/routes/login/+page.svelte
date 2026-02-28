@@ -7,12 +7,38 @@
 	let showPassword = $state(false);
 	let isLoading = $state(false);
 
+	let errorMessage = $state('');
+	let successMessage = $state('');
+
 	async function handleSubmit(e: SubmitEvent) {
 		e.preventDefault();
 		isLoading = true;
-		// Simulate login
-		await new Promise((resolve) => setTimeout(resolve, 2000));
-		isLoading = false;
+		errorMessage = '';
+		successMessage = '';
+
+		try {
+			const response = await fetch('http://localhost:8080/api/auth/login', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ email, password })
+			});
+
+			if (response.ok) {
+				const data = await response.json();
+				console.log('Login success:', data);
+				successMessage = 'Login Berhasil! (Sesuai permintaan, tidak ada redirect)';
+			} else {
+				const errorText = await response.text();
+				errorMessage = errorText || 'Email atau password salah';
+			}
+		} catch (e) {
+			console.error('Login error:', e);
+			errorMessage = 'Gagal terhubung ke server';
+		} finally {
+			isLoading = false;
+		}
 	}
 </script>
 
@@ -79,6 +105,22 @@
 
 			<!-- Form -->
 			<form onsubmit={handleSubmit} class="space-y-6">
+				{#if errorMessage}
+					<div
+						class="p-4 bg-red-50 border border-red-100 rounded-xl text-red-600 text-[10px] font-bold uppercase tracking-wider text-center"
+					>
+						{errorMessage}
+					</div>
+				{/if}
+
+				{#if successMessage}
+					<div
+						class="p-4 bg-emerald-50 border border-emerald-100 rounded-xl text-emerald-600 text-[10px] font-bold uppercase tracking-wider text-center"
+					>
+						{successMessage}
+					</div>
+				{/if}
+
 				<div class="space-y-2">
 					<label
 						for="email"

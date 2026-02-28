@@ -3,3 +3,5 @@ databaseChangeLog:
       file: db/changelog/20251109064800-add-entity-StudySession.yaml
   - include:
       file: db/changelog/20251115122300-add-entity-Content.yaml
+  - include:
+      file: db/changelog/20260228143000-add-user-table.yaml

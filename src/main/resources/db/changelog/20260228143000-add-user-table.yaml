@@ -1,0 +1,63 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20260228143000-1
+      author: antigravity
+      changes:
+        - createSequence:
+            sequenceName: user_seq
+            startValue: 1
+            incrementBy: 1
+
+  - changeSet:
+      id: 20260228143000-2
+      author: antigravity
+      changes:
+        - createTable:
+            tableName: user
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: email
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: password
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: full_name
+                  type: varchar(255)
+
+  - changeSet:
+      id: 20260228143000-3
+      author: antigravity
+      changes:
+        - addDefaultValue:
+            tableName: user
+            columnName: id
+            defaultValueSequenceNext: user_seq
+
+  - changeSet:
+      id: 20260228143000-4
+      author: antigravity
+      changes:
+        - insert:
+            tableName: user
+            columns:
+              - column:
+                  name: email
+                  value: admin@prayertime.com
+              - column:
+                  name: password
+                  value: $2a$10$8363y9X8qL9qfO.I5E2xGusG5U.yX7H0.SjP0uX5.e.G6lq1V.x.i # admin123
+              - column:
+                  name: full_name
+                  value: Admin
