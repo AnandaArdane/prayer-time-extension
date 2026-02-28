@@ -18,6 +18,17 @@
 	let isSubmitting = $state(false);
 	let searchTerm = $state('');
 
+	function getCookie(name: string) {
+		const value = `; ${document.cookie}`;
+		const parts = value.split(`; ${name}=`);
+		if (parts.length === 2) return parts.pop()?.split(';').shift();
+	}
+
+	function handleLogout() {
+		document.cookie = 'jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+		window.location.href = '/login';
+	}
+
 	// Form state
 	let currentItem = $state<Partial<Content>>({
 		id: undefined,
@@ -108,6 +119,9 @@
 		try {
 			const res = await fetch(url, {
 				method,
+				headers: {
+					Authorization: `Bearer ${getCookie('jwt')}`
+				},
 				body: formData
 			});
 
@@ -146,6 +160,9 @@
 		try {
 			const res = await fetch(`http://localhost:8080/api/contents/${item.id}`, {
 				method: 'PUT',
+				headers: {
+					Authorization: `Bearer ${getCookie('jwt')}`
+				},
 				body: formData
 			});
 
@@ -174,7 +191,10 @@
 
 		try {
 			const res = await fetch(`http://localhost:8080/api/contents/${idToDelete}`, {
-				method: 'DELETE'
+				method: 'DELETE',
+				headers: {
+					Authorization: `Bearer ${getCookie('jwt')}`
+				}
 			});
 			if (res.ok) {
 				contents = contents.filter((c) => c.id !== idToDelete);
@@ -205,7 +225,8 @@
 		UploadGray: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mb-2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>`,
 		SettingsIcon: `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#D1C7BD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>`,
 		EmptyStateImage: `<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#e5e7eb" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-3"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>`,
-		Trash2Large: `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>`
+		Trash2Large: `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>`,
+		LogOut: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>`
 	};
 </script>
 
@@ -238,7 +259,16 @@
 			<p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">
 				SABTU, 28 FEBRUARI 2026
 			</p>
-			<p class="text-xs font-bold text-[#666]">11 RAMADAN 1447 H</p>
+			<div class="flex items-center gap-3 mt-1">
+				<p class="text-xs font-bold text-[#666]">11 RAMADAN 1447 H</p>
+				<button
+					onclick={handleLogout}
+					class="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 text-red-500 rounded-lg text-[9px] font-black uppercase tracking-wider hover:bg-red-100 transition-colors border border-red-100"
+				>
+					{@html icons.LogOut}
+					KELUAR
+				</button>
+			</div>
 		</div>
 	</header>
 

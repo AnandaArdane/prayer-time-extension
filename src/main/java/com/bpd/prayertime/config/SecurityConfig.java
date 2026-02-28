@@ -19,6 +19,12 @@ import java.util.List;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -26,10 +32,12 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/prayers/**").permitAll()
-                        .requestMatchers("/api/contents/**").permitAll()
-                        .requestMatchers("/api/study-sessions/**").permitAll()
-                        .anyRequest().authenticated());
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/prayers/**").permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/contents/**").permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/study-sessions/**").permitAll()
+                        .anyRequest().authenticated())
+                .addFilterBefore(jwtAuthenticationFilter,
+                        org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

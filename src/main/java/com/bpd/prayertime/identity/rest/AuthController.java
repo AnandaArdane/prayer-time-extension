@@ -1,5 +1,6 @@
 package com.bpd.prayertime.identity.rest;
 
+import com.bpd.prayertime.config.JwtUtils;
 import com.bpd.prayertime.identity.domain.User;
 import com.bpd.prayertime.identity.domain.UserRepository;
 import lombok.Data;
@@ -15,10 +16,12 @@ public class AuthController {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtils jwtUtils;
 
-    public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtils jwtUtils) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtUtils = jwtUtils;
     }
 
     @PostMapping("/login")
@@ -26,7 +29,8 @@ public class AuthController {
         Optional<User> userOpt = userRepository.findByEmail(loginRequest.getEmail());
 
         if (userOpt.isPresent() && passwordEncoder.matches(loginRequest.getPassword(), userOpt.get().getPassword())) {
-            return ResponseEntity.ok(new LoginResponse("Login successful", userOpt.get().getEmail()));
+            String token = jwtUtils.generateToken(userOpt.get().getEmail());
+            return ResponseEntity.ok(new LoginResponse("Login successful", userOpt.get().getEmail(), token));
         }
 
         return ResponseEntity.status(401).body("Invalid email or password");
@@ -42,5 +46,6 @@ public class AuthController {
     public static class LoginResponse {
         private final String message;
         private final String email;
+        private final String token;
     }
 }

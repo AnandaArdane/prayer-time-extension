@@ -29,6 +29,12 @@
 			if (response.ok) {
 				const data = await response.json();
 				console.log('Login success:', data);
+
+				// Store token in cookie
+				const expires = new Date();
+				expires.setDate(expires.getDate() + 1);
+				document.cookie = `jwt=${data.token}; expires=${expires.toUTCString()}; path=/; SameSite=Strict`;
+
 				successMessage = 'Login Berhasil! Mengalihkan...';
 				setTimeout(() => {
 					goto('/admin/contents');
