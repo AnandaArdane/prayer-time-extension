@@ -4,6 +4,7 @@ import com.bpd.prayertime.studysession.service.StudySessionDto;
 import com.bpd.prayertime.studysession.service.StudySessionRequestDto;
 import com.bpd.prayertime.studysession.service.StudySessionService;
 import jakarta.validation.Valid;
+import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +25,8 @@ public class StudySessionController {
     }
 
     @PutMapping("/study-sessions/{id}")
-    public ResponseEntity<StudySessionDto> update(@PathVariable Long id, @Valid @RequestBody StudySessionRequestDto studySessionRequestDto) {
+    public ResponseEntity<StudySessionDto> update(@PathVariable Long id,
+            @Valid @RequestBody StudySessionRequestDto studySessionRequestDto) {
         StudySessionDto studySessionDto = studySessionService.update(id, studySessionRequestDto);
         return ResponseEntity.ok(studySessionDto);
     }
@@ -33,5 +35,15 @@ public class StudySessionController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         studySessionService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/study-sessions")
+    public ResponseEntity<List<StudySessionDto>> listAll() {
+        return ResponseEntity.ok(studySessionService.findAll());
+    }
+
+    @GetMapping("/study-sessions/active")
+    public ResponseEntity<List<StudySessionDto>> listActive() {
+        return ResponseEntity.ok(studySessionService.findAllActive());
     }
 }

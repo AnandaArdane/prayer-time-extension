@@ -17,11 +17,11 @@ export const load: PageServerLoad = async ({ url }) => {
         }
     }
 
-    const [prayerData, slides] = await Promise.all([
+    const [prayerData, slides, sidebarEvents] = await Promise.all([
         getPrayerData(lat, long, referenceDate),
-        getSlides()
+        getSlides(),
+        getSidebarEvents()
     ]);
-    const sidebarEvents = getSidebarEvents();
 
     return {
         prayerData,

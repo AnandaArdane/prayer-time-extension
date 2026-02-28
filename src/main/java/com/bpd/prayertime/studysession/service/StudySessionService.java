@@ -3,6 +3,9 @@ package com.bpd.prayertime.studysession.service;
 import com.bpd.prayertime.studysession.entity.StudySession;
 import com.bpd.prayertime.studysession.repository.StudySessionRepository;
 import com.bpd.prayertime.studysession.service.mapper.StudySessionMapper;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +19,18 @@ public class StudySessionService {
     public StudySessionService(StudySessionMapper studySessionMapper, StudySessionRepository studySessionRepository) {
         this.studySessionMapper = studySessionMapper;
         this.studySessionRepository = studySessionRepository;
+    }
+
+    public List<StudySessionDto> findAll() {
+        return studySessionRepository.findAllByOrderByDateDescTimeDesc().stream()
+                .map(studySessionMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<StudySessionDto> findAllActive() {
+        return studySessionRepository.findByDateAfterOrderByDateAscTimeAsc(LocalDate.now().minusDays(1)).stream()
+                .map(studySessionMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     public StudySessionDto save(StudySessionRequestDto studySessionRequestDto) {

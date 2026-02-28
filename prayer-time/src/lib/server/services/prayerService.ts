@@ -127,26 +127,46 @@ export const getSlides = async (): Promise<Slide[]> => {
     return slides;
 };
 
-export const getSidebarEvents = (): SidebarEvent[] => {
+interface StudySessionDto {
+    id: number;
+    title: string;
+    place: string;
+    date: string;
+    time: string;
+}
+
+export const getSidebarEvents = async (): Promise<SidebarEvent[]> => {
+    try {
+        const response = await fetch('http://localhost:8080/api/study-sessions/active');
+        if (response.ok) {
+            const sessions: StudySessionDto[] = await response.json();
+            return sessions.map((session) => {
+                const date = new Date(session.date);
+                const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+                const dayName = days[date.getDay()];
+                const timeStr = session.time.substring(0, 5);
+
+                return {
+                    id: session.id,
+                    dayTime: `${dayName} | ${timeStr} WIB`,
+                    title: session.title,
+                    imageUrl: 'https://images.unsplash.com/photo-1518991033282-3e28d488f723?auto=format&fit=crop&w=200&q=80', // Fallback image
+                    isActive: false
+                };
+            });
+        }
+    } catch (e) {
+        console.error('Error fetching study sessions:', e);
+    }
+
+    // Fallback data
     return [
         {
             id: 1,
-            dayTime: "Selasa | 13:00 WIB",
-            title: "Kitab Bulughul Maram",
-            imageUrl: "https://images.unsplash.com/photo-1518991033282-3e28d488f723?auto=format&fit=crop&w=200&q=80",
+            dayTime: 'Selasa | 13:00 WIB',
+            title: 'Kitab Bulughul Maram',
+            imageUrl: 'https://images.unsplash.com/photo-1518991033282-3e28d488f723?auto=format&fit=crop&w=200&q=80',
             isActive: true
-        },
-        {
-            id: 2,
-            dayTime: "Rabu | 09:00 WIB",
-            title: "Kajian Muslimah: Fiqih Wanita",
-            imageUrl: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=200&q=80"
-        },
-        {
-            id: 3,
-            dayTime: "Jumat | 16:00 WIB",
-            title: "Tahsin Al-Qur'an Dewasa",
-            imageUrl: "https://images.unsplash.com/photo-1551041777-ed0764a0028d?auto=format&fit=crop&w=200&q=80"
         }
     ];
 };
