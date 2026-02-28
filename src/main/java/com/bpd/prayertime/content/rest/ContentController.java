@@ -30,7 +30,8 @@ public class ContentController {
 
     @PutMapping("/contents/{id}")
     public ResponseEntity<ContentResponseDto> update(@PathVariable Long id,
-            @Valid @RequestPart ContentRequestDto contentRequestDto, @RequestPart MultipartFile file) {
+            @Valid @RequestPart ContentRequestDto contentRequestDto,
+            @RequestPart(required = false) MultipartFile file) {
         ContentResponseDto studySessionDto = contentService.update(id, contentRequestDto, file);
         return ResponseEntity.ok(studySessionDto);
     }
@@ -39,6 +40,11 @@ public class ContentController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         contentService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/contents")
+    public ResponseEntity<List<ContentResponseDto>> listAll() {
+        return ResponseEntity.ok(contentService.findAll());
     }
 
     @GetMapping("/contents/active")

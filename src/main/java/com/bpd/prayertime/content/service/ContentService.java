@@ -83,11 +83,19 @@ public class ContentService {
 
     public List<ContentResponseDto> findAllActive() {
         return contentRepository.findAllByActiveTrue().stream()
-                .map(content -> {
-                    ContentResponseDto response = contentMapper.toDto(content);
-                    response.setUrl(getContentUrl(content.getId()));
-                    return response;
-                })
+                .map(this::toDtoWithUrl)
                 .toList();
+    }
+
+    public List<ContentResponseDto> findAll() {
+        return contentRepository.findAll().stream()
+                .map(this::toDtoWithUrl)
+                .toList();
+    }
+
+    private ContentResponseDto toDtoWithUrl(Content content) {
+        ContentResponseDto response = contentMapper.toDto(content);
+        response.setUrl(getContentUrl(content.getId()));
+        return response;
     }
 }
