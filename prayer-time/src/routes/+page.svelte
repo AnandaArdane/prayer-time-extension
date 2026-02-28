@@ -7,11 +7,12 @@
 	import StudySession from '$lib/components/StudySession.svelte';
 	import { goto, invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
+	import TimeMachine from '$lib/components/TimeMachine.svelte';
 
 	let { data }: { data: PageData } = $props();
 
 	// State for Head and general time
-	let currentTime = $state(new Date());
+	let currentTime = $state(data.simulatedTime ? new Date(data.simulatedTime) : new Date());
 	let userLocation = $state('Mendeteksi...');
 
 	// Derived state for formatting
@@ -103,18 +104,23 @@
 		}
 	});
 
+	$effect(() => {
+		currentTime = data.simulatedTime ? new Date(data.simulatedTime) : new Date();
+
+		const clockInterval = setInterval(() => {
+			if (data.simulatedTime) {
+				currentTime = new Date(currentTime.getTime() + 1000);
+			} else {
+				currentTime = new Date();
+			}
+		}, 1000);
+
+		return () => clearInterval(clockInterval);
+	});
+
 	onMount(() => {
 		// Fetch Location
 		fetchUserLocation();
-
-		// Clock Interval
-		const clockInterval = setInterval(() => {
-			currentTime = new Date();
-		}, 1000);
-
-		return () => {
-			clearInterval(clockInterval);
-		};
 	});
 </script>
 
@@ -185,4 +191,5 @@
 			&copy; 2026 DIGITAL MASJID HUB | AL-BARKAH
 		</p>
 	</footer>
+	<TimeMachine simulatedTime={data.simulatedTime} />
 </div>

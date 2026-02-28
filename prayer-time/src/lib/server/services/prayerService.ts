@@ -42,16 +42,16 @@ interface ContentResponseDto {
     url: string;
 }
 
-export const getPrayerData = async (lat?: number, long?: number): Promise<PrayerData> => {
+export const getPrayerData = async (lat?: number, long?: number, referenceDate?: Date): Promise<PrayerData> => {
     let prayerTimes: PrayerTime[] = [];
     let error: string | undefined;
     let hijriDate: string | undefined;
 
     try {
-        // Default to Jakarta, Today
+        // Default to Jakarta, Today (or simulated time)
         const latitude = lat ?? -6.1751;
         const longitude = long ?? 106.8650;
-        const now = new Date();
+        const now = referenceDate ?? new Date();
         const year = now.getFullYear();
         const month = String(now.getMonth() + 1).padStart(2, '0');
         const day = String(now.getDate()).padStart(2, '0');
