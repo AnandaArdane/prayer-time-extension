@@ -27,7 +27,7 @@ public class HijriDateCalculator {
         }
 
         HijrahDate hijrahDate = HijrahDate.from(hijriBaseDate);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMMM yyyy G", new Locale("id", "ID"));
-        return formatter.format(hijrahDate);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, d MMMM yyyy G", new Locale("id", "ID"));
+        return formatter.format(hijrahDate).replace("Minggu", "Ahad");
     }
 }

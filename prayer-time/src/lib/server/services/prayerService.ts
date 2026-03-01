@@ -142,7 +142,7 @@ export const getSidebarEvents = async (): Promise<SidebarEvent[]> => {
             const sessions: StudySessionDto[] = await response.json();
             return sessions.map((session) => {
                 const date = new Date(session.date);
-                const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+                const days = ['Ahad', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
                 const dayName = days[date.getDay()];
                 const timeStr = session.time.substring(0, 5);
 

@@ -17,12 +17,14 @@
 
 	// Derived state for formatting
 	let dateString = $derived(
-		currentTime.toLocaleDateString('id-ID', {
-			weekday: 'long',
-			year: 'numeric',
-			month: 'long',
-			day: 'numeric'
-		})
+		currentTime
+			.toLocaleDateString('id-ID', {
+				weekday: 'long',
+				year: 'numeric',
+				month: 'long',
+				day: 'numeric'
+			})
+			.replace('Minggu', 'Ahad')
 	);
 
 	async function fetchUserLocation() {
