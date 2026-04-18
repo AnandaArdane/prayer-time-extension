@@ -31,10 +31,10 @@
 	}
 </script>
 
-<div class="fixed bottom-6 right-6 z-[100]">
+<div class="relative">
 	{#if isOpen}
 		<div
-			class="bg-white rounded-2xl shadow-2xl border border-gray-100 p-6 mb-4 w-72 animate-in fade-in slide-in-from-bottom-4 duration-300"
+			class="absolute bottom-16 right-0 bg-white rounded-2xl shadow-2xl border border-gray-100 p-6 mb-4 w-72 animate-in fade-in slide-in-from-bottom-4 duration-300 z-50"
 		>
 			<div class="flex justify-between items-center mb-4">
 				<h3 class="text-sm font-black text-theme-primary-700 uppercase tracking-widest">
@@ -104,23 +104,24 @@
 
 	<button
 		onclick={() => (isOpen = !isOpen)}
-		class="w-12 h-12 bg-white rounded-full shadow-lg border border-gray-100 flex items-center justify-center hover:scale-110 active:scale-95 transition-all group"
-		class:text-theme-primary-600={simulatedTime}
-		class:text-gray-400={!simulatedTime}
+		class="w-14 h-14 bg-white rounded-full btn-shadow flex items-center justify-center border border-gray-100 transition-all duration-300 transform hover:-translate-y-1 active:scale-95 group z-40 relative"
+		class:text-[#4A4643]={simulatedTime}
+		class:bg-gray-100={simulatedTime}
+		class:text-[#A8A29A]={!simulatedTime}
+		class:hover:bg-[#4A4643]={!simulatedTime}
+		class:hover:text-white={!simulatedTime}
 		aria-label="Toggle Time Machine"
 	>
 		<svg
-			class="w-6 h-6 group-hover:rotate-12 transition-transform"
+			class="w-6 h-6 group-hover:scale-110 transition-transform"
 			fill="none"
 			stroke="currentColor"
+			stroke-width="2"
+			stroke-linecap="round"
+			stroke-linejoin="round"
 			viewBox="0 0 24 24"
 		>
-			<path
-				stroke-linecap="round"
-				stroke-linejoin="round"
-				stroke-width="2"
-				d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-			/>
+			<circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
 		</svg>
 	</button>
 </div>

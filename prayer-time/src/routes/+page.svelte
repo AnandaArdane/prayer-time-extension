@@ -126,93 +126,98 @@
 	});
 </script>
 
-<div class="bg-gray-50 font-sans text-gray-800 antialiased min-h-screen flex flex-col">
-	<!-- Header -->
-	<header class="w-full px-4 lg:px-12 pt-4 mb-2">
-		<div class="flex justify-between items-center border-b border-gray-200 pb-3">
-			<div class="flex items-center">
-				<div
-					class="bg-theme-primary-700 w-8 h-8 lg:w-10 lg:h-10 rounded-lg flex items-center justify-center shadow-md mr-3 lg:mr-4"
-				>
-					<svg class="w-5 h-5 lg:w-6 lg:h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-						<path
-							d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"
-						/>
-					</svg>
+<div class="text-[#4A4643] min-h-screen overflow-x-hidden flex flex-col">
+	<div class="max-w-7xl mx-auto px-4 md:px-8 py-4 w-full flex-grow flex flex-col">
+		<header
+			class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6"
+		>
+			<div class="flex items-center space-x-4">
+				<div class="p-2.5 bg-white rounded-2xl shadow-sm border border-gray-100">
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						class="w-5 h-5 text-[#6B655E]"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2.5"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle
+							cx="12"
+							cy="10"
+							r="3"
+						></circle></svg
+					>
 				</div>
 				<div>
-					<div class="flex items-center gap-1 mb-0.5">
-						<span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
-						<p class="text-[7px] lg:text-[8px] font-bold text-gray-400 uppercase tracking-widest">
-							Lokasi Saat Ini
-						</p>
+					<div class="text-[9px] text-[#A8A29A] uppercase tracking-[0.2em] font-bold leading-tight">
+						Lokasi Saat Ini
 					</div>
-					<p
-						id="user-location"
-						class="text-[10px] lg:text-[12px] text-theme-primary-700 font-black uppercase tracking-widest italic"
-					>
+					<div class="font-black text-lg text-[#4A4643] tracking-tight uppercase">
 						{userLocation}
-					</p>
+					</div>
 				</div>
 			</div>
 
-			<div class="text-right">
-				<p class="text-gray-500 text-[8px] lg:text-[10px] font-bold uppercase tracking-widest">
-					{dateString}
-				</p>
-				<p
-					class="text-theme-primary-500 text-[8px] lg:text-[10px] font-black uppercase tracking-widest"
-				>
-					{data.prayerData.hijriDate || 'Memuat Tanggal...'}
-				</p>
-			</div>
-		</div>
-	</header>
-
-	<!-- Jadwal Sholat Section -->
-	<PrayerTimeComponent
-		prayerTimes={data.prayerData.prayerTimes}
-		{currentTime}
-		error={data.prayerData.error}
-	/>
-
-	<!-- Main Content -->
-	<main
-		class="max-w-[1440px] mx-auto px-4 lg:px-12 w-full grid grid-cols-1 lg:grid-cols-12 gap-6 flex-grow pb-8"
-	>
-		<!-- Slider Area (Content) -->
-		<Content slides={data.slides} />
-
-		<!-- Sidebar Area (Study Session) -->
-		<StudySession events={data.sidebarEvents} />
-	</main>
-
-	<!-- Footer -->
-	<footer class="py-4 px-6 text-center border-t border-gray-100 bg-white mt-auto">
-		<p class="text-gray-400 text-[8px] lg:text-[10px] font-bold tracking-[0.4em] uppercase">
-			&copy; 2026 DIGITAL MASJID HUB | AL-BARKAH
-		</p>
-	</footer>
-	<div class="fixed bottom-6 right-20 z-[100]">
-		<a
-			href="/login"
-			class="w-12 h-12 bg-white rounded-full shadow-lg border border-gray-100 flex items-center justify-center hover:scale-110 active:scale-95 transition-all group text-gray-400 hover:text-theme-primary-600"
-			aria-label="Login"
-		>
-			<svg
-				class="w-6 h-6 group-hover:scale-110 transition-transform"
-				fill="none"
-				stroke="currentColor"
-				viewBox="0 0 24 24"
+			<div
+				class="flex items-center space-x-6 bg-white/50 backdrop-blur-sm px-5 py-2 rounded-full border border-white"
 			>
-				<path
+				<div class="text-right">
+					<div class="font-bold text-xs text-[#4A4643] uppercase">{dateString}</div>
+					<div class="text-[10px] text-red-400 font-bold uppercase tracking-widest">
+						{data.prayerData.hijriDate || 'Memuat Tanggal...'}
+					</div>
+				</div>
+				<div class="h-6 w-[1px] bg-gray-200 hidden sm:block"></div>
+				<div class="text-xl font-black text-[#4A4643] tracking-tight tabular-nums">
+					{currentTime
+						.toLocaleTimeString('id-ID', {
+							hour12: false,
+							hour: '2-digit',
+							minute: '2-digit',
+							second: '2-digit'
+						})
+						.replace(/\./g, ':')}
+				</div>
+			</div>
+		</header>
+
+		<div class="flex flex-col space-y-4 flex-grow">
+			<!-- Baris Atas -->
+			<div class="grid grid-cols-1 lg:grid-cols-10 gap-6 items-stretch">
+				<Content slides={data.slides} />
+				<PrayerTimeComponent
+					prayerTimes={data.prayerData.prayerTimes}
+					{currentTime}
+					error={data.prayerData.error}
+				/>
+			</div>
+
+			<!-- Baris Bawah (Kajian) -->
+			<StudySession events={data.sidebarEvents} />
+		</div>
+
+		<!-- Tombol Floating -->
+		<div class="fixed bottom-10 right-10 flex flex-col items-center space-y-3 z-50">
+			<TimeMachine simulatedTime={data.simulatedTime} />
+			<a
+				href="/login"
+				class="w-14 h-14 bg-white rounded-full btn-shadow flex items-center justify-center text-[#A8A29A] border border-gray-100 hover:bg-[#4A4643] hover:text-white transition-all duration-300 transform hover:-translate-y-1 active:scale-95 group"
+				aria-label="Login"
+			>
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					class="w-6 h-6 group-hover:scale-110 transition-transform"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
 					stroke-linecap="round"
 					stroke-linejoin="round"
-					stroke-width="2"
-					d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-				/>
-			</svg>
-		</a>
+					><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"
+					></circle></svg
+				>
+			</a>
+		</div>
 	</div>
-	<TimeMachine simulatedTime={data.simulatedTime} />
 </div>

@@ -91,10 +91,10 @@
 	}
 </script>
 
-<section class="w-full px-4 lg:px-12 mb-4">
+<div class="lg:col-span-3 flex flex-col space-y-4">
 	{#if error}
 		<div
-			class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+			class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-2xl relative text-sm"
 			role="alert"
 		>
 			<strong class="font-bold">Error!</strong>
@@ -103,134 +103,78 @@
 	{/if}
 
 	<div
-		class="bg-white p-4 lg:p-5 rounded-[1.5rem] lg:rounded-[2rem] shadow-sm border border-gray-100"
+		class="bg-[#4A4643] p-6 rounded-[2.5rem] shadow-2xl relative overflow-hidden group text-white flex-shrink-0"
 	>
-		<div class="flex flex-col lg:flex-row gap-6 items-center">
-			<!-- Time Info Center -->
-			<div class="w-full lg:w-1/3 lg:border-r border-gray-100 lg:pr-8">
-				<div class="flex flex-col gap-4">
-					<div
-						class="transition-colors duration-500 p-3 lg:p-4 rounded-2xl border"
-						class:bg-green-600={isExactTime}
-						class:border-green-400={isExactTime}
-						class:shadow-lg={isExactTime}
-						class:animate-pulse-slow={isExactTime}
-						class:bg-theme-secondary={!isExactTime}
-						class:border-theme-primary-100={!isExactTime}
-						class:border-opacity-50={!isExactTime}
-					>
-						<span
-							class="text-[8px] lg:text-[10px] font-black uppercase tracking-[0.2em] block mb-1"
-							class:text-white={isExactTime}
-							class:text-theme-primary-500={!isExactTime}
-						>
-							{isExactTime ? 'SEDANG BERLANGSUNG' : 'Sholat Berikutnya'}
-						</span>
-						<div class="flex items-baseline justify-between">
-							<h2
-								class="text-2xl lg:text-3xl font-black leading-none"
-								class:text-white={isExactTime}
-								class:text-theme-primary-700={!isExactTime}
-							>
-								{nextPrayerName}
-							</h2>
-							<p
-								class="text-xs lg:text-sm font-bold"
-								class:text-green-100={isExactTime}
-								class:text-theme-primary-500={!isExactTime}
-							>
-								{nextPrayerTime}
-							</p>
-						</div>
-					</div>
-
-					<div class="flex justify-between items-center px-1">
-						<div class="flex flex-col">
-							<span
-								class="text-[7px] lg:text-[8px] font-bold text-gray-400 uppercase tracking-widest mb-0.5"
-								>Waktu Sekarang</span
-							>
-							<h3 class="text-xs lg:text-sm font-black text-gray-700 tracking-wider">
-								{timeString}
-							</h3>
-						</div>
-						<div class="h-6 w-px bg-gray-100"></div>
-						<div class="flex flex-col text-right">
-							<span
-								class="text-[7px] lg:text-[8px] font-bold uppercase tracking-widest mb-0.5"
-								class:text-green-400={isExactTime}
-								class:text-red-400={!isExactTime}
-							>
-								{isExactTime ? 'STATUS' : 'Sisa Waktu'}
-							</span>
-							<h3
-								class="text-xs lg:text-sm font-black tracking-wider"
-								class:text-green-600={isExactTime}
-								class:animate-bounce={isExactTime}
-								class:text-red-600={!isExactTime}
-							>
-								{countdownString}
-							</h3>
-						</div>
-					</div>
-				</div>
+		<div
+			class="absolute -right-4 -top-4 opacity-5 transform rotate-12 group-hover:rotate-0 transition-transform duration-500"
+		>
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				class="w-24 h-24 text-white"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"
+				></polyline></svg
+			>
+		</div>
+		<div class="relative z-10">
+			<div class="text-[9px] text-[#DED9D1] font-bold uppercase tracking-[0.2em] mb-1">
+				{isExactTime ? 'SEDANG BERLANGSUNG' : 'Sholat Berikutnya'}
 			</div>
-
-			<!-- Grid Sholat Utama -->
-			<div class="w-full lg:w-2/3">
-				<div class="grid grid-cols-5 gap-2 lg:gap-3">
-					{#if prayerTimes.length > 0}
-						{#each prayerTimes as prayer, i}
-							{@const active = isPrayerActive(i)}
-							<div
-								class="sholat-card p-2 lg:p-4 rounded-xl lg:rounded-2xl flex flex-col items-center transition-all relative overflow-hidden"
-								class:border-2={active}
-								class:border-green-500={active && isExactTime}
-								class:bg-green-50={active && isExactTime}
-								class:shadow-xl={active && isExactTime}
-								class:lg:scale-110={active && isExactTime}
-								class:is-active-now={active && isExactTime}
-								class:z-20={active && isExactTime}
-								class:border-theme-primary-500={active && !isExactTime}
-								class:bg-theme-primary-100={active && !isExactTime}
-								class:shadow-md={active && !isExactTime}
-								class:lg:scale-105={active && !isExactTime}
-								class:z-10={active && !isExactTime}
-								class:bg-gray-50={!active}
-								class:border-none={!active}
-								class:opacity-50={!active}
-							>
-								<span class="text-[7px] lg:text-[9px] font-bold text-gray-400 uppercase mb-1"
-									>{prayer.name}</span
-								>
-								<span class="text-xs lg:text-xl font-black text-theme-primary-600"
-									>{prayer.time}</span
-								>
-
-								{#if active && isExactTime}
-									<div
-										class="absolute top-0 right-0 bg-green-500 text-white text-[6px] lg:text-[8px] font-bold px-2 py-0.5 rounded-bl-lg uppercase"
-									>
-										SEKARANG
-									</div>
-								{/if}
-							</div>
-						{/each}
-					{:else}
-						<!-- Placeholder when data is missing/error -->
-						{#each Array(5) as _, i}
-							<div
-								class="sholat-card p-2 lg:p-4 rounded-xl lg:rounded-2xl bg-gray-50 flex flex-col items-center opacity-30 border border-gray-200"
-							>
-								<span class="text-[7px] lg:text-[9px] font-bold text-gray-400 uppercase mb-1"
-									>...</span
-								>
-								<span class="text-xs lg:text-xl font-black text-gray-400">--:--</span>
-							</div>
-						{/each}
-					{/if}
+			<div class="text-3xl font-black mb-0.5 tracking-tight">{nextPrayerName}</div>
+			<div class="text-[#DED9D1] text-xl font-black mb-4 tracking-tighter">
+				{nextPrayerTime} WIB
+			</div>
+			<div class="pt-4 border-t border-white/10">
+				<div class="text-[9px] text-[#A8A29A] uppercase font-bold mb-1 tracking-widest">
+					{isExactTime ? 'STATUS' : 'Sisa Waktu'}
+				</div>
+				<div
+					class="text-2xl font-black tabular-nums tracking-tighter {isExactTime
+						? 'text-green-400 animate-bounce'
+						: 'text-red-400 animate-pulse'}"
+				>
+					{countdownString}
 				</div>
 			</div>
 		</div>
 	</div>
-</section>
+
+	<div class="bg-white rounded-[2.5rem] p-6 card-shadow border border-gray-100/50 flex-grow">
+		<h3 class="font-black text-[#4A4643] uppercase tracking-widest text-[10px] mb-4 px-2">
+			Jadwal Lengkap
+		</h3>
+		<div class="space-y-2">
+			{#if prayerTimes.length > 0}
+				{#each prayerTimes as p, i}
+					{@const active = isPrayerActive(i)}
+					<div
+						class="flex justify-between items-baseline p-4 rounded-2xl transition-all border {active
+							? 'bg-[#DED9D1] border-[#4A4643]/10'
+							: 'bg-[#F7F6F3]/50 border-transparent'}"
+					>
+						<span
+							class="text-base font-black uppercase tracking-tight {active
+								? 'text-[#4A4643]'
+								: 'text-[#4A4643]/80'}">{p.name}</span
+						>
+						<span class="text-lg font-black tracking-tighter text-[#4A4643]">{p.time}</span>
+					</div>
+				{/each}
+			{:else}
+				{#each Array(5) as _, i}
+					<div
+						class="flex justify-between items-baseline p-4 rounded-2xl transition-all border bg-[#F7F6F3]/50 border-transparent opacity-50"
+					>
+						<span class="text-base font-black uppercase tracking-tight text-[#4A4643]/80">...</span>
+						<span class="text-lg font-black tracking-tighter text-[#4A4643]">--:--</span>
+					</div>
+				{/each}
+			{/if}
+		</div>
+	</div>
+</div>
