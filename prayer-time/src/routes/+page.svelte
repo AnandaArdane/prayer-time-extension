@@ -8,6 +8,7 @@
 	import { goto, invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import TimeMachine from '$lib/components/TimeMachine.svelte';
+	import AdzanScreen from '$lib/components/AdzanScreen.svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -26,6 +27,52 @@
 			})
 			.replace('Minggu', 'Ahad')
 	);
+
+	let activeAdzanPrayer = $derived.by(() => {
+		if (!data.prayerData.prayerTimes) return null;
+		// Hanya sholat wajib yang memicu layar Adzan
+		const obligatory = ['Subuh', 'Dzuhur', 'Ashar', 'Maghrib', 'Isya'];
+		
+		for (const p of data.prayerData.prayerTimes) {
+			if (!obligatory.includes(p.name)) continue;
+			const [h, m] = p.time.split(':').map(Number);
+			const pTime = new Date(currentTime);
+			pTime.setHours(h, m, 0, 0);
+			
+			const diffMs = currentTime.getTime() - pTime.getTime();
+			// Berlaku selama 5 menit (300,000 ms)
+			if (diffMs >= 0 && diffMs < 5 * 60 * 1000) {
+				return p;
+			}
+		}
+		return null;
+	});
+
+	let nextPrayerInfo = $derived.by(() => {
+		if (!data.prayerData.prayerTimes) return { name: '-', time: '--:--' };
+		
+		const now = currentTime;
+		let minDiff = Infinity;
+		let nextPrayer = null;
+
+		for (let i = 0; i < data.prayerData.prayerTimes.length; i++) {
+			const p = data.prayerData.prayerTimes[i];
+			const [h, m] = p.time.split(':').map(Number);
+			const pDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, 0);
+			const diff = pDate.getTime() - now.getTime();
+
+			if (diff > 0 && diff < minDiff) {
+				minDiff = diff;
+				nextPrayer = p;
+			}
+		}
+
+		if (!nextPrayer && data.prayerData.prayerTimes.length > 0) {
+			nextPrayer = data.prayerData.prayerTimes[0];
+		}
+
+		return nextPrayer || { name: '-', time: '--:--' };
+	});
 
 	async function fetchUserLocation() {
 		if ('geolocation' in navigator) {
@@ -125,6 +172,19 @@
 		fetchUserLocation();
 	});
 </script>
+
+{#if activeAdzanPrayer}
+	<AdzanScreen 
+		prayerName={activeAdzanPrayer.name}
+		prayerTime={activeAdzanPrayer.time}
+		{currentTime}
+		{dateString}
+		hijriDate={data.prayerData.hijriDate || 'Memuat Tanggal...'}
+		{userLocation}
+		nextPrayerName={nextPrayerInfo.name}
+		nextPrayerTime={nextPrayerInfo.time}
+	/>
+{/if}
 
 <div class="text-[#4A4643] min-h-screen overflow-x-hidden flex flex-col">
 	<div class="max-w-7xl mx-auto px-4 md:px-8 py-4 w-full flex-grow flex flex-col">
