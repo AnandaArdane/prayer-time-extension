@@ -77,29 +77,31 @@
 	>
 		{#each events as event}
 			<div
-				class="flex-none w-[280px] snap-start bg-white p-5 rounded-[2rem] card-shadow border border-gray-100/50 hover:-translate-y-1 transition-all duration-300 group cursor-pointer"
+				class="flex-none w-[280px] snap-start bg-white rounded-[2rem] card-shadow border border-gray-100/50 hover:-translate-y-1 transition-all duration-300 group cursor-pointer flex items-stretch overflow-hidden"
 			>
+				<div class="flex-1 min-w-0 p-5 pr-4 flex flex-col justify-center">
+					<div class="flex items-center justify-between mb-2">
+						<div class="text-[9px] font-bold text-red-400 uppercase tracking-widest">
+							{event.dayTime}
+						</div>
+					</div>
+					<h4
+						class="font-black text-[#4A4643] text-sm line-clamp-2 group-hover:text-[#6B655E]"
+						title={event.title}
+					>
+						{event.title}
+					</h4>
+				</div>
 				{#if event.imageUrl}
-					<div class="h-32 w-full rounded-2xl overflow-hidden mb-4 bg-gray-100 relative">
+					<div class="shrink-0 w-24 bg-gray-100 relative">
 						<img
 							src={event.imageUrl}
 							alt={event.title}
-							class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+							class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
 							onerror={handleImgError}
 						/>
 					</div>
 				{/if}
-				<div class="flex items-center justify-between mb-2">
-					<div class="text-[9px] font-bold text-red-400 uppercase tracking-widest">
-						{event.dayTime}
-					</div>
-				</div>
-				<h4
-					class="font-black text-[#4A4643] text-sm line-clamp-2 group-hover:text-[#6B655E]"
-					title={event.title}
-				>
-					{event.title}
-				</h4>
 			</div>
 		{/each}
 		{#if events.length === 0}

@@ -19,6 +19,8 @@ import java.util.Optional;
 public class AladhanService implements OneDayPrayerTimeRepository {
 
     public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+    private static final int KEMENAG_METHOD = 20;
+
     private final RestTemplate restTemplate;
 
     public AladhanService(RestTemplate restTemplate) {
@@ -29,7 +31,7 @@ public class AladhanService implements OneDayPrayerTimeRepository {
     public OneDayPrayerTime getOneDayPrayerTime(Coordinate coordinate, LocalDate date) {
         String aladhanDate = DATE_FORMATTER.format(date);
 
-        String url = String.format("%s/timings/%s?latitude=%s&longitude=%s&method=%s", "https://api.aladhan.com/v1", aladhanDate, coordinate.latitude().value(), coordinate.longitude().value(), 20);
+        String url = String.format("%s/timings/%s?latitude=%s&longitude=%s&method=%s", "https://api.aladhan.com/v1", aladhanDate, coordinate.latitude().value(), coordinate.longitude().value(), KEMENAG_METHOD);
         PrayerTimeResponse response = restTemplate.getForObject(url, PrayerTimeResponse.class);
 
         PrayerTimeResponse.Data data = Optional.ofNullable(response).map(PrayerTimeResponse::data).orElseThrow();
@@ -48,7 +50,7 @@ public class AladhanService implements OneDayPrayerTimeRepository {
     public OneDayPrayerTime getOneDayPrayerTime(City city, LocalDate date) {
         String aladhanDate = DATE_FORMATTER.format(date);
 
-        String url = String.format("%s/timingsByCity/%s?country=ID&city=%s&method=%s", "https://api.aladhan.com/v1", aladhanDate, city.name(), 20);
+        String url = String.format("%s/timingsByCity/%s?country=ID&city=%s&method=%s", "https://api.aladhan.com/v1", aladhanDate, city.name(), KEMENAG_METHOD);
         PrayerTimeResponse response = restTemplate.getForObject(url, PrayerTimeResponse.class);
 
         PrayerTimeResponse.Data data = Optional.ofNullable(response).map(PrayerTimeResponse::data).orElseThrow();
