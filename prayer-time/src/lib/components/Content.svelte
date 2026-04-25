@@ -67,20 +67,7 @@
 						class="absolute inset-0 w-full h-full object-contain transition-transform duration-1000 group-hover:scale-105 z-10"
 						onerror={handleImgError}
 					/>
-					<div
-						class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-20 flex flex-col justify-end p-6 lg:p-8 pointer-events-none"
-					>
-						<span
-							class="glass-effect text-white text-[8px] lg:text-[10px] font-bold px-3 py-1 rounded-full mb-2 uppercase tracking-widest w-fit"
-							>{slide.category}</span
-						>
-						<h2 class="text-xl lg:text-3xl font-black text-white leading-tight mb-1">
-							{slide.title}
-						</h2>
-						<p class="text-gray-200 text-[10px] lg:text-sm max-w-md font-light line-clamp-2">
-							{slide.description}
-						</p>
-					</div>
+
 				</div>
 			{/each}
 		</div>
