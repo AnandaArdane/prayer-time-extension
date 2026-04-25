@@ -337,7 +337,7 @@
 					<label
 						for="fileInput"
 						class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2"
-					>Gambar Kajian (Opsional)</label>
+					>Poster Kajian (Opsional)</label>
 					<div
 						role="button"
 						tabindex="0"
