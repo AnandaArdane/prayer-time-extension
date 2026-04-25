@@ -133,6 +133,7 @@ interface StudySessionDto {
     place: string;
     date: string;
     time: string;
+    url?: string;
 }
 
 export const getSidebarEvents = async (): Promise<SidebarEvent[]> => {
@@ -150,7 +151,7 @@ export const getSidebarEvents = async (): Promise<SidebarEvent[]> => {
                     id: session.id,
                     dayTime: `${dayName} | ${timeStr} WIB`,
                     title: session.title,
-                    imageUrl: 'https://images.unsplash.com/photo-1518991033282-3e28d488f723?auto=format&fit=crop&w=200&q=80', // Fallback image
+                    imageUrl: session.url ? `http://localhost:8080${session.url}` : undefined,
                     isActive: false
                 };
             });

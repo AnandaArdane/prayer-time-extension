@@ -9,3 +9,5 @@ databaseChangeLog:
       file: db/changelog/20260228145500-rename-user-to-admin-user.yaml
   - include:
       file: db/changelog/20260228150000-fix-admin-password.yaml
+  - include:
+      file: db/changelog/20260426063000-add-has-image-to-study-session.yaml

@@ -42,6 +42,9 @@ public class StudySession {
     @NotNull
     private String title;
 
+    @Column(name = "has_image", nullable = false)
+    private Boolean hasImage = false;
+
     @Override
     public final boolean equals(Object object) {
         if (this == object) return true;

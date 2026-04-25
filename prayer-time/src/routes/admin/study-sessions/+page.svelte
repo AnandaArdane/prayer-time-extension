@@ -9,6 +9,7 @@
 		place: string;
 		date: string;
 		time: string;
+		url?: string;
 	}
 
 	let studySessions = $state<StudySession[]>([]);
@@ -28,6 +29,8 @@
 		date: '',
 		time: ''
 	});
+	let selectedFile = $state<File | null>(null);
+	let imagePreview = $state<string | null>(null);
 
 	const filteredSessions = $derived(
 		studySessions.filter((item) => item.title.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -50,13 +53,29 @@
 	function openAddModal() {
 		isEditing = false;
 		currentItem = { title: '', place: '', date: '', time: '' };
+		selectedFile = null;
+		imagePreview = null;
 		isModalOpen = true;
 	}
 
 	function openEditModal(item: StudySession) {
 		isEditing = true;
 		currentItem = { ...item };
+		selectedFile = null;
+		imagePreview = item.url ? `http://localhost:8080${item.url}` : null;
 		isModalOpen = true;
+	}
+
+	function handleFileChange(e: Event) {
+		const target = e.target as HTMLInputElement;
+		if (target.files && target.files.length > 0) {
+			selectedFile = target.files[0];
+			const reader = new FileReader();
+			reader.onloadend = () => {
+				imagePreview = reader.result as string;
+			};
+			reader.readAsDataURL(selectedFile);
+		}
 	}
 
 	async function handleSave() {
@@ -69,23 +88,37 @@
 
 		const method = isEditing ? 'PUT' : 'POST';
 
+		const formData = new FormData();
+		formData.append(
+			'studySessionRequestDto',
+			new Blob(
+				[
+					JSON.stringify({
+						title: currentItem.title,
+						place: currentItem.place,
+						date: currentItem.date,
+						time: currentItem.time
+							? currentItem.time.length === 5
+								? currentItem.time + ':00'
+								: currentItem.time
+							: ''
+					})
+				],
+				{ type: 'application/json' }
+			)
+		);
+
+		if (selectedFile) {
+			formData.append('file', selectedFile);
+		}
+
 		try {
 			const res = await fetch(url, {
 				method,
 				headers: {
-					'Content-Type': 'application/json',
 					Authorization: `Bearer ${getCookie('jwt')}`
 				},
-				body: JSON.stringify({
-					title: currentItem.title,
-					place: currentItem.place,
-					date: currentItem.date,
-					time: currentItem.time
-						? currentItem.time.length === 5
-							? currentItem.time + ':00'
-							: currentItem.time
-						: ''
-				})
+				body: formData
 			});
 
 			if (res.ok) {
@@ -141,6 +174,9 @@
 	const icons = {
 		Search: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>`,
 		Plus: `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>`,
+		Image: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>`,
+		Upload: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>`,
+		UploadGray: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mb-2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>`,
 		XCircle: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>`,
 		Edit2: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>`,
 		Trash2: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>`,
@@ -207,37 +243,48 @@
 	<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 		{#each filteredSessions as item (item.id)}
 			<div
-				class="bg-white rounded-[1.5rem] p-5 shadow-sm border border-gray-50 flex flex-col gap-4 hover:shadow-md transition-all group relative"
+				class="bg-white rounded-[1.5rem] p-5 shadow-sm border border-gray-50 flex flex-col md:flex-row gap-4 hover:shadow-md transition-all group relative"
 				in:fade
 			>
-				<div class="flex justify-between items-start">
-					<div class="flex-1 pr-10">
-						<div class="flex items-center gap-2 mb-1">
-							<span class="text-[9px] text-gray-300 font-bold tracking-widest uppercase"
-								>ID: {item.id}</span
-							>
-						</div>
-						<h3 class="font-bold text-[#2D2D2D] text-lg leading-tight mb-2">
-							{item.title}
-						</h3>
-					</div>
-					<div class="flex gap-1 absolute top-4 right-4">
-						<button
-							onclick={() => openEditModal(item)}
-							class="p-2 rounded-lg text-gray-300 hover:bg-[#D1C7BD]/20 hover:text-[#8E8378]"
-						>
-							{@html icons.Edit2}
-						</button>
-						<button
-							onclick={() => askToDelete(item.id)}
-							class="p-2 rounded-lg text-gray-300 hover:bg-red-50 hover:text-red-400"
-						>
-							{@html icons.Trash2}
-						</button>
-					</div>
+				<div class="w-16 h-16 md:w-20 md:h-20 bg-[#F8F9FA] rounded-xl flex flex-col items-center justify-center text-gray-300 border border-dashed border-gray-200 relative overflow-hidden shrink-0">
+					{#if item.url}
+						<img
+							src={`http://localhost:8080${item.url}`}
+							alt={item.title}
+							class="w-full h-full object-cover"
+						/>
+					{:else}
+						{@html icons.Image}
+						<span class="text-[7px] font-black mt-1 uppercase tracking-tighter text-gray-400">IMAGE</span>
+					{/if}
 				</div>
+				<div class="flex-1 min-w-0">
+					<div class="flex justify-between items-start">
+						<div class="flex-1 pr-10">
+							<div class="flex items-center gap-2 mb-1">
+								<span class="text-[9px] text-gray-300 font-bold tracking-widest uppercase">ID: {item.id}</span>
+							</div>
+							<h3 class="font-bold text-[#2D2D2D] text-lg leading-tight mb-2">
+								{item.title}
+							</h3>
+						</div>
+						<div class="flex gap-1 absolute top-4 right-4">
+							<button
+								onclick={() => openEditModal(item)}
+								class="p-2 rounded-lg text-gray-300 hover:bg-[#D1C7BD]/20 hover:text-[#8E8378]"
+							>
+								{@html icons.Edit2}
+							</button>
+							<button
+								onclick={() => askToDelete(item.id)}
+								class="p-2 rounded-lg text-gray-300 hover:bg-red-50 hover:text-red-400"
+							>
+								{@html icons.Trash2}
+							</button>
+						</div>
+					</div>
 
-				<div class="space-y-2 pt-2 border-t border-gray-50">
+					<div class="space-y-2 pt-2 border-t border-gray-50">
 					<div class="flex items-center gap-2 text-gray-500">
 						{@html icons.Calendar}
 						<span class="text-xs font-medium">{formatDate(item.date)}</span>
@@ -250,6 +297,7 @@
 						{@html icons.MapPinSmall}
 						<span class="text-xs font-medium">{item.place || 'Masjid Al-Barkah'}</span>
 					</div>
+				</div>
 				</div>
 			</div>
 		{/each}
@@ -284,6 +332,36 @@
 			</div>
 
 			<div class="space-y-4">
+				<!-- Image Input -->
+				<div>
+					<label
+						for="fileInput"
+						class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2"
+					>Gambar Kajian (Opsional)</label>
+					<div
+						role="button"
+						tabindex="0"
+						onclick={() => document.getElementById('fileInput')?.click()}
+						onkeydown={(e) => e.key === 'Enter' && document.getElementById('fileInput')?.click()}
+						class="relative group cursor-pointer"
+					>
+						{#if imagePreview}
+							<div class="w-full h-32 rounded-2xl overflow-hidden border-2 border-[#F8F9FA] relative">
+								<img src={imagePreview} class="w-full h-full object-cover" alt="Preview" />
+								<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all">
+									{@html icons.Upload}
+								</div>
+							</div>
+						{:else}
+							<div class="w-full h-32 bg-[#F8F9FA] rounded-2xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center text-gray-400 hover:bg-[#F1F3F4]">
+								{@html icons.UploadGray}
+								<span class="text-[9px] font-black uppercase tracking-widest text-center px-4">Klik untuk unggah</span>
+							</div>
+						{/if}
+					</div>
+					<input type="file" id="fileInput" hidden accept="image/*" onchange={handleFileChange} />
+				</div>
+
 				<!-- Judul Input -->
 				<div>
 					<label
