@@ -372,9 +372,9 @@
 					>
 						{#if imagePreview}
 							<div
-								class="w-full h-32 rounded-2xl overflow-hidden border-2 border-[#F8F9FA] relative"
+								class="w-full h-48 bg-[#F8F9FA] rounded-2xl overflow-hidden border-2 border-gray-100 relative flex items-center justify-center"
 							>
-								<img src={imagePreview} class="w-full h-full object-cover" alt="Preview" />
+								<img src={imagePreview} class="w-full h-full object-contain" alt="Preview" />
 								<div
 									class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all"
 								>
@@ -383,7 +383,7 @@
 							</div>
 						{:else}
 							<div
-								class="w-full h-32 bg-[#F8F9FA] rounded-2xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center text-gray-400 hover:bg-[#F1F3F4]"
+								class="w-full h-48 bg-[#F8F9FA] rounded-2xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center text-gray-400 hover:bg-[#F1F3F4]"
 							>
 								{@html icons.UploadGray}
 								<span class="text-[9px] font-black uppercase tracking-widest text-center px-4"
