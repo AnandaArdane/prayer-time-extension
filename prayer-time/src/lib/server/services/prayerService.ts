@@ -16,8 +16,11 @@ export interface SidebarEvent {
     id: number;
     dayTime: string;
     title: string;
-    imageUrl: string;
+    imageUrl?: string;
     isActive?: boolean;
+    dateStr?: string;
+    timeStr?: string;
+    place?: string;
 }
 
 export interface PrayerData {
@@ -152,7 +155,10 @@ export const getSidebarEvents = async (): Promise<SidebarEvent[]> => {
                     dayTime: `${dayName} | ${timeStr} WIB`,
                     title: session.title,
                     imageUrl: session.url ? `http://localhost:8080${session.url}` : undefined,
-                    isActive: false
+                    isActive: false,
+                    dateStr: new Intl.DateTimeFormat('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(date),
+                    timeStr: `${timeStr} WIB`,
+                    place: session.place
                 };
             });
         }
@@ -167,7 +173,10 @@ export const getSidebarEvents = async (): Promise<SidebarEvent[]> => {
             dayTime: 'Selasa | 13:00 WIB',
             title: 'Kitab Bulughul Maram',
             imageUrl: 'https://images.unsplash.com/photo-1518991033282-3e28d488f723?auto=format&fit=crop&w=200&q=80',
-            isActive: true
+            isActive: true,
+            dateStr: 'Selasa, 1 Januari 2024',
+            timeStr: '13:00 WIB',
+            place: 'Masjid Raya Bintaro Jaya'
         }
     ];
 };
