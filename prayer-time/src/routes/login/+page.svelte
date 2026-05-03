@@ -53,7 +53,7 @@
 </script>
 
 <svelte:head>
-	<title>Login | Digital Masjid Hub</title>
+	<title>Login</title>
 </svelte:head>
 
 <div
@@ -266,7 +266,7 @@
 		<!-- Footer Info -->
 		<div class="mt-12 text-center">
 			<p class="text-[8px] font-bold text-gray-400 uppercase tracking-[0.4em]">
-				&copy; 2026 DIGITAL HUB | ALL RIGHTS RESERVED
+				&copy; 2026 | ALL RIGHTS RESERVED
 			</p>
 		</div>
 	</div>
