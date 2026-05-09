@@ -319,9 +319,6 @@
 					<h2 class="text-xl font-black text-[#2D2D2D] uppercase italic tracking-tighter">
 						{isEditing ? 'Edit Jadwal' : 'Tambah Jadwal'}
 					</h2>
-					<p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest">
-						Informasi Kajian Masjid
-					</p>
 				</div>
 				<button
 					onclick={() => (isModalOpen = false)}

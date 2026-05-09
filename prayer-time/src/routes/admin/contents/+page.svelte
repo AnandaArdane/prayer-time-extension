@@ -343,9 +343,6 @@
 					<h2 class="text-xl font-black text-[#2D2D2D] uppercase italic tracking-tighter">
 						{isEditing ? 'Edit Konten' : 'Buat Konten'}
 					</h2>
-					<p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest">
-						Informasi Masjid Digital
-					</p>
 				</div>
 				<button
 					onclick={() => (isModalOpen = false)}
@@ -406,7 +403,7 @@
 						type="text"
 						id="titleInput"
 						class="w-full bg-[#F8F9FA] p-4 rounded-xl outline-none border-2 border-transparent focus:border-[#D1C7BD] transition-all font-bold text-base"
-						placeholder="Judul Kajian..."
+						placeholder="Judul Konten"
 						bind:value={currentItem.title}
 					/>
 				</div>
