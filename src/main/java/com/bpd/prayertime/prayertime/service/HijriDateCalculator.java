@@ -1,4 +1,6 @@
-package com.bpd.prayertime.prayertime.application;
+package com.bpd.prayertime.prayertime.service;
+
+import org.springframework.stereotype.Service;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -7,6 +9,7 @@ import java.time.chrono.HijrahDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
+@Service
 public class HijriDateCalculator {
 
     private final Clock clock;
