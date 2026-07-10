@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import type { Slide } from '$lib/server/services/prayerService';
+	import type { Slide } from '$lib/services/prayerService';
 
 	interface Props {
 		slides: Slide[];

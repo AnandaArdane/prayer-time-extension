@@ -1,7 +1,7 @@
-import type { PageServerLoad } from './$types';
-import { getPrayerData, getSlides, getSidebarEvents } from '$lib/server/services/prayerService';
+import type { PageLoad } from './$types';
+import { getPrayerData, getSlides, getSidebarEvents } from '$lib/services/prayerService';
 
-export const load: PageServerLoad = async ({ url }) => {
+export const load: PageLoad = async ({ url }) => {
     const latParam = url.searchParams.get('lat');
     const longParam = url.searchParams.get('long');
     const timeParam = url.searchParams.get('time');

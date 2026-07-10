@@ -2,6 +2,7 @@
 	import { fade, fly } from 'svelte/transition';
 	import { backOut } from 'svelte/easing';
 	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
 
 	let email = $state('');
 	let password = $state('');
@@ -10,6 +11,17 @@
 
 	let errorMessage = $state('');
 	let successMessage = $state('');
+
+	onMount(() => {
+		const getCookie = (name: string) => {
+			const value = `; ${document.cookie}`;
+			const parts = value.split(`; ${name}=`);
+			if (parts.length === 2) return parts.pop()?.split(';').shift();
+		};
+		if (getCookie('jwt')) {
+			goto('/admin/contents');
+		}
+	});
 
 	async function handleSubmit(e: SubmitEvent) {
 		e.preventDefault();

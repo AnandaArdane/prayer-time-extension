@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { SidebarEvent } from '$lib/server/services/prayerService';
+	import type { SidebarEvent } from '$lib/services/prayerService';
 
 	interface Props {
 		events: SidebarEvent[];

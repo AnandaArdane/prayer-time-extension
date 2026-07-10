@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { PrayerTime } from '$lib/server/services/prayerService';
+	import type { PrayerTime } from '$lib/services/prayerService';
 
 	interface Props {
 		prayerTimes: PrayerTime[];

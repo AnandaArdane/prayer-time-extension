@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
-	import { type PrayerTime } from '$lib/server/services/prayerService';
+	import { type PrayerTime } from '$lib/services/prayerService';
 	import PrayerTimeComponent from '$lib/components/PrayerTime.svelte';
 	import Content from '$lib/components/Content.svelte';
 	import StudySession from '$lib/components/StudySession.svelte';

@@ -1,12 +1,26 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { fade } from 'svelte/transition';
+	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
 
 	let { children } = $props();
 
+	onMount(() => {
+		const getCookie = (name: string) => {
+			const value = `; ${document.cookie}`;
+			const parts = value.split(`; ${name}=`);
+			if (parts.length === 2) return parts.pop()?.split(';').shift();
+		};
+		const jwt = getCookie('jwt');
+		if (!jwt) {
+			goto('/login');
+		}
+	});
+
 	function handleLogout() {
 		document.cookie = 'jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-		window.location.href = '/login';
+		goto('/login');
 	}
 
 	const icons = {
