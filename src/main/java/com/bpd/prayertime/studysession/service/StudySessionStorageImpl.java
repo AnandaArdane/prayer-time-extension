@@ -41,10 +41,14 @@ public class StudySessionStorageImpl implements StudySessionStorage {
     }
 
     private void createBucket() {
-        s3Client.createBucket(CreateBucketRequest.builder()
-                .bucket(STUDY_SESSION_BUCKET)
-                .build());
-        log.info("Bucket created: " + STUDY_SESSION_BUCKET);
+        try {
+            s3Client.createBucket(CreateBucketRequest.builder()
+                    .bucket(STUDY_SESSION_BUCKET)
+                    .build());
+            log.info("Bucket created: " + STUDY_SESSION_BUCKET);
+        } catch (BucketAlreadyExistsException | BucketAlreadyOwnedByYouException e) {
+            log.info("Bucket already exists: " + STUDY_SESSION_BUCKET);
+        }
     }
 
     @Override

@@ -41,10 +41,14 @@ public class ContentStorageImpl implements ContentStorage {
     }
 
     private void createBucket() {
-        s3Client.createBucket(CreateBucketRequest.builder()
-                .bucket(CONTENT_BUCKET)
-                .build());
-        log.info("Bucket created: " + CONTENT_BUCKET);
+        try {
+            s3Client.createBucket(CreateBucketRequest.builder()
+                    .bucket(CONTENT_BUCKET)
+                    .build());
+            log.info("Bucket created: " + CONTENT_BUCKET);
+        } catch (BucketAlreadyExistsException | BucketAlreadyOwnedByYouException e) {
+            log.info("Bucket already exists: " + CONTENT_BUCKET);
+        }
     }
 
     @Override
