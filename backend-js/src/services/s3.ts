@@ -27,13 +27,19 @@ export async function initBuckets() {
     for (const bucket of [BUCKET_CONTENT, BUCKET_STUDY_SESSION]) {
         try {
             await s3Client.send(new HeadBucketCommand({ Bucket: bucket }));
+            console.log(`Bucket already exists: ${bucket}`);
         } catch (error: any) {
             console.log(`Bucket ${bucket} not found, creating...`);
             try {
                 await s3Client.send(new CreateBucketCommand({ Bucket: bucket }));
-                console.log(`Bucket ${bucket} created.`);
-            } catch (err) {
-                console.error(`Failed to create bucket ${bucket}:`, err);
+                console.log(`Bucket created: ${bucket}`);
+            } catch (err: any) {
+                // R2 and some S3-compatible services may throw this even when headBucket fails
+                if (err.name === "BucketAlreadyExists" || err.name === "BucketAlreadyOwnedByYou") {
+                    console.log(`Bucket already exists: ${bucket}`);
+                } else {
+                    console.error(`Failed to create bucket ${bucket}:`, err);
+                }
             }
         }
     }

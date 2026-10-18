@@ -14,8 +14,11 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-// CORS setup matching Spring Boot SecurityConfig
-const allowedOrigins = ["http://localhost:5173", "http://localhost:4173"];
+// CORS setup - configurable via CORS_ORIGINS env var (comma-separated)
+const defaultOrigins = ["http://localhost:5173", "http://localhost:4173"];
+const allowedOrigins = process.env.CORS_ORIGINS
+    ? process.env.CORS_ORIGINS.split(",").map(o => o.trim())
+    : defaultOrigins;
 app.use(cors({
     origin: (origin, callback) => {
         // Allow requests with no origin (like mobile apps, curl, or server-to-server)
