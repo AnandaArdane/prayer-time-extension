@@ -60,7 +60,7 @@ export const getPrayerData = async (lat?: number, long?: number, referenceDate?:
         const day = String(now.getDate()).padStart(2, '0');
         const dateStr = `${year}-${month}-${day}`;
 
-        const response = await fetch(`http://localhost:8080/api/prayers/by-coordinate?latitude=${latitude}&longitude=${longitude}&date=${dateStr}`);
+        const response = await fetch(`/api/prayers/by-coordinate?latitude=${latitude}&longitude=${longitude}&date=${dateStr}`);
 
         if (response.ok) {
             const data: OneDayPrayerTimeDto = await response.json();
@@ -107,7 +107,7 @@ export const getSlides = async (): Promise<Slide[]> => {
     ];
 
     try {
-        const contentResponse = await fetch('http://localhost:8080/api/contents/active');
+        const contentResponse = await fetch('/api/contents/active');
         if (contentResponse.ok) {
             const contents: ContentResponseDto[] = await contentResponse.json();
             if (contents.length > 0) {
@@ -116,8 +116,8 @@ export const getSlides = async (): Promise<Slide[]> => {
                     title: content.title,
                     description: content.title,
                     category: "-",
-                    imageUrl: `http://localhost:8080${content.url}`,
-                    blurUrl: `http://localhost:8080${content.url}`
+                    imageUrl: `${content.url}`,
+                    blurUrl: `${content.url}`
                 }));
             }
         } else {
@@ -141,7 +141,7 @@ interface StudySessionDto {
 
 export const getSidebarEvents = async (): Promise<SidebarEvent[]> => {
     try {
-        const response = await fetch('http://localhost:8080/api/study-sessions/active');
+        const response = await fetch('/api/study-sessions/active');
         if (response.ok) {
             const sessions: StudySessionDto[] = await response.json();
             return sessions.map((session) => {
@@ -154,7 +154,7 @@ export const getSidebarEvents = async (): Promise<SidebarEvent[]> => {
                     id: session.id,
                     dayTime: `${dayName} | ${timeStr} WIB`,
                     title: session.title,
-                    imageUrl: session.url ? `http://localhost:8080${session.url}` : undefined,
+                    imageUrl: session.url ? `${session.url}` : undefined,
                     isActive: false,
                     dateStr: new Intl.DateTimeFormat('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(date),
                     timeStr: `${timeStr} WIB`,

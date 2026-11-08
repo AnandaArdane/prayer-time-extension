@@ -1,4 +1,2 @@
-import { load as parentLoad } from '../+page';
-import type { PageLoad } from './$types';
+export { load } from '../+page';
 
-export const load: PageLoad = parentLoad;
