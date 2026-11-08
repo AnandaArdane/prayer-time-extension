@@ -1,11 +1,22 @@
 # Stage 1: Build the application
-FROM gradle:8-jdk17 AS build
-COPY --chown=gradle:gradle . /home/gradle/src
-WORKDIR /home/gradle/src
-RUN gradle build --no-daemon -x test
+FROM node:20-slim AS build
+RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
+WORKDIR /app
+COPY backend-js/package*.json ./
+COPY backend-js/prisma ./prisma/
+RUN npm ci
+COPY backend-js/ ./
+RUN npx prisma generate
+RUN npm run build
 
 # Stage 2: Run the application
-FROM openjdk:17-jdk-slim
+# Copy full node_modules from build stage to avoid re-downloading Prisma engines
+FROM node:20-slim
+RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
+WORKDIR /app
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/dist ./dist
+COPY backend-js/package*.json ./
 EXPOSE 8080
-COPY --from=build /home/gradle/src/build/libs/prayertime-0.0.1-SNAPSHOT.jar /app.jar
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+ENV PORT=8080
+ENTRYPOINT ["node", "dist/server.js"]

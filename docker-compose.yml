@@ -9,7 +9,7 @@ services:
       POSTGRES_PASSWORD: mypassword
       POSTGRES_DB: prayer_time
     ports:
-      - "5432:5432"
+      - "5435:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -36,14 +36,14 @@ services:
       - postgres
       - minio
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/prayer_time
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: mypassword
+      DATABASE_URL: postgresql://postgres:mypassword@postgres:5432/prayer_time?schema=public
+      PORT: 8080
+      JWT_SECRET: myjwtsecret12345
       CLOUD_AWS_S3_ENDPOINT: http://minio:9000
       CLOUD_AWS_REGION: us-east-1
       CLOUD_AWS_ACCESSKEY: minioadmin
       CLOUD_AWS_SECRETKEY: minioadmin
-      CLOUD_AWS_PATH_STYLE_ACCESS: true
+      CLOUD_AWS_PATH_STYLE_ACCESS: "true"
     ports:
       - "8080:8080"
     networks:
