@@ -50,17 +50,34 @@ export async function storeFile(
 	filename: string,
 	contentType: string
 ): Promise<void> {
-	await s3Client.send(
-		new PutObjectCommand({
-			Bucket: bucket,
-			Key: key,
-			Body: body,
-			ContentType: contentType,
-			Metadata: {
-				filename: filename
+	const putCmd = new PutObjectCommand({
+		Bucket: bucket,
+		Key: key,
+		Body: body,
+		ContentType: contentType,
+		Metadata: {
+			filename: filename
+		}
+	});
+
+	try {
+		await s3Client.send(putCmd);
+	} catch (err: any) {
+		// If bucket doesn't exist, try creating it automatically
+		if (err.name === 'NoSuchBucket' || err.$metadata?.httpStatusCode === 404) {
+			console.log(`Bucket ${bucket} does not exist, attempting to create it...`);
+			try {
+				await s3Client.send(new CreateBucketCommand({ Bucket: bucket }));
+				console.log(`Bucket ${bucket} created successfully. Retrying upload...`);
+				await s3Client.send(putCmd);
+				return;
+			} catch (createErr: any) {
+				console.error(`Failed to auto-create bucket ${bucket}:`, createErr);
+				throw err; // rethrow original NoSuchBucket error
 			}
-		})
-	);
+		}
+		throw err;
+	}
 }
 
 export async function deleteFile(bucket: string, key: string): Promise<void> {
