@@ -18,8 +18,8 @@ const s3Client = new S3Client({
 	forcePathStyle: env.CLOUD_AWS_PATH_STYLE_ACCESS !== 'false'
 });
 
-export const BUCKET_CONTENT = 'content';
-export const BUCKET_STUDY_SESSION = 'study-session';
+export const BUCKET_CONTENT = env.CLOUD_AWS_S3_BUCKET_CONTENT || 'prayer-time-content';
+export const BUCKET_STUDY_SESSION = env.CLOUD_AWS_S3_BUCKET_STUDY_SESSION || 'prayer-time-study-session';
 
 export async function initBuckets(): Promise<void> {
 	for (const bucket of [BUCKET_CONTENT, BUCKET_STUDY_SESSION]) {
