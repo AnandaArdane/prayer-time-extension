@@ -39,7 +39,7 @@
 	async function fetchSessions() {
 		isLoading = true;
 		try {
-			const res = await fetch('http://localhost:8080/api/study-sessions');
+			const res = await fetch('/api/study-sessions');
 			if (res.ok) {
 				studySessions = await res.json();
 			}
@@ -62,7 +62,7 @@
 		isEditing = true;
 		currentItem = { ...item };
 		selectedFile = null;
-		imagePreview = item.url ? `http://localhost:8080${item.url}` : null;
+		imagePreview = item.url ? item.url : null;
 		isModalOpen = true;
 	}
 
@@ -83,8 +83,8 @@
 		isSubmitting = true;
 
 		const url = isEditing
-			? `http://localhost:8080/api/study-sessions/${currentItem.id}`
-			: 'http://localhost:8080/api/study-sessions';
+			? `/api/study-sessions/${currentItem.id}`
+			: '/api/study-sessions';
 
 		const method = isEditing ? 'PUT' : 'POST';
 
@@ -150,7 +150,7 @@
 		if (idToDelete === null) return;
 
 		try {
-			const res = await fetch(`http://localhost:8080/api/study-sessions/${idToDelete}`, {
+			const res = await fetch(`/api/study-sessions/${idToDelete}`, {
 				method: 'DELETE',
 				headers: {
 					Authorization: `Bearer ${getCookie('jwt')}`
@@ -249,7 +249,7 @@
 				<div class="w-16 h-16 md:w-20 md:h-20 bg-[#F8F9FA] rounded-xl flex flex-col items-center justify-center text-gray-300 border border-dashed border-gray-200 relative overflow-hidden shrink-0">
 					{#if item.url}
 						<img
-							src={`http://localhost:8080${item.url}`}
+							src={item.url}
 							alt={item.title}
 							class="w-full h-full object-cover"
 						/>

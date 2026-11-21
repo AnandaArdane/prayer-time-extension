@@ -35,7 +35,7 @@
 	async function fetchContents() {
 		isLoading = true;
 		try {
-			const res = await fetch('http://localhost:8080/api/contents');
+			const res = await fetch('/api/contents');
 			if (res.ok) {
 				contents = await res.json();
 			}
@@ -58,7 +58,7 @@
 		isEditing = true;
 		currentItem = { ...item };
 		selectedFile = null;
-		imagePreview = `http://localhost:8080${item.url}`;
+		imagePreview = item.url;
 		isModalOpen = true;
 	}
 
@@ -101,8 +101,8 @@
 		}
 
 		const url = isEditing
-			? `http://localhost:8080/api/contents/${currentItem.id}`
-			: 'http://localhost:8080/api/contents';
+			? `/api/contents/${currentItem.id}`
+			: '/api/contents';
 
 		const method = isEditing ? 'PUT' : 'POST';
 
@@ -148,7 +148,7 @@
 		);
 
 		try {
-			const res = await fetch(`http://localhost:8080/api/contents/${item.id}`, {
+			const res = await fetch(`/api/contents/${item.id}`, {
 				method: 'PUT',
 				headers: {
 					Authorization: `Bearer ${getCookie('jwt')}`
@@ -180,7 +180,7 @@
 		if (idToDelete === null) return;
 
 		try {
-			const res = await fetch(`http://localhost:8080/api/contents/${idToDelete}`, {
+			const res = await fetch(`/api/contents/${idToDelete}`, {
 				method: 'DELETE',
 				headers: {
 					Authorization: `Bearer ${getCookie('jwt')}`
@@ -270,7 +270,7 @@
 				>
 					{#if item.url}
 						<img
-							src={`http://localhost:8080${item.url}`}
+							src={item.url}
 							alt={item.title}
 							class="w-full h-full object-cover"
 						/>
